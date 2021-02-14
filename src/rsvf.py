@@ -242,7 +242,7 @@ def extract_params_split(vector_split):
     bits_per_sample =          int(vector_split[INDEX_BITS_PER_SAMPLE])
     first_sample=              int(vector_split[INDEX_FIRST_SAMPLE])
     data_type =                    vector_split[INDEX_DATA_TYPE]
-    n_bins_pcal =              int(vector_split[INDEX_NBINS_PCAL])
+    n_bins_pcal =            int(float(vector_split[INDEX_NBINS_PCAL])//1)
     fs_pcal=                 float(vector_split[INDEX_PCAL_FREQ])
     channel_index_str =            vector_split[INDEX_CHANNEL_INDEX]
     freq_channel =           float(vector_split[INDEX_CHANNEL_FREQ])

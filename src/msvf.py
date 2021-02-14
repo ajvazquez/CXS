@@ -116,6 +116,7 @@ import lib_debug
 imp.reload(lib_debug)
 from lib_debug import *
 
+PY3 = sys.version_info[0] == 3
 
 
 
@@ -1279,7 +1280,9 @@ def main():
     
     # Hadoop reads from stdin
     reader = sys.stdin
-    
+    if PY3:
+        reader = open(sys.stdin.fileno(), "rb", 0, closefd=False)
+
 
     ###################################
     #   Process experiment .ini info
@@ -1804,6 +1807,8 @@ def main():
                                                                         0,0,0,\
                                                                         num_samples_in_chunk,abs_delay,rate_delay,freq_channel,\
                                                                         fractional_sample_delay,accumulation_time,shift_int,sideband)
+                                                if PY3:
+                                                    signal_chunk_fft_out = signal_chunk_fft_out.decode("utf-8")
                                                 str_print = pair_str+signal_chunk_fft_out
                                                 if SILENT_OUTPUT==0:
                                                     print(str_print)

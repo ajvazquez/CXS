@@ -58,6 +58,8 @@ import array
 import os
 import sys
 
+PY3 = sys.version_info[0] == 3
+
 USE_BITARRAY=0
 if USE_BITARRAY:
     from bitarray import bitarray                   # Enable for VDIF creation functions (testing)
@@ -372,7 +374,11 @@ def read_bytes_offset_file(f,n_bytes,v=0):
     """
     words_array = []
     try:
-        words_array = np.fromfile(file = f,dtype=np.uint8, count=n_bytes)
+        if PY3:
+            words_array = np.frombuffer(f.read(n_bytes),dtype=np.uint8, count=n_bytes)
+        else:
+            words_array = np.fromfile(file=f,dtype=np.uint8, count=n_bytes)
+        #words_array = np.fromfile(file = f,dtype=np.uint8, count=n_bytes)
         if v==1:
             print("vdif - Read "+str(n_bytes))
     except EOFError:
@@ -408,13 +414,20 @@ def read_words_from_file_to_raw(f,n_words,v=0):
     """
     words_array = []
     try:
-        words_array = np.fromfile(file = f,dtype=TYPE_WORD, count=n_words)
+        if PY3:
+            words_array = np.frombuffer(f.read(WORD_SIZE_BYTES*n_words),dtype=TYPE_WORD, count=n_words)
+        else:
+            words_array = np.fromfile(file = f,dtype=TYPE_WORD, count=n_words)
+        #words_array = np.fromfile(file = f,dtype=TYPE_WORD, count=n_words)
         if v==1:
             print("vdif - Read "+str(n_words))
     except EOFError:
         if v==1:
             print("vdif - Tried to read "+str(n_words))
-        return([])   
+        return([])
+    except ValueError:
+        # TODO: check
+        return([])
     return(words_array)
 
 

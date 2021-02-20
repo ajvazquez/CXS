@@ -3,11 +3,14 @@ import subprocess
 import os
 import sys
 import io
+import time
 
 from cx2d_lib import get_error_indicator
 
 PY3 = sys.version_info[0] == 3
 
+# Time old last exec output
+RECENT_FILE_S = 1.0
 
 THIS_PATH = os.path.dirname(os.path.realpath(__file__))
 PATH_EXAMPLE_LEGACY = os.path.abspath(THIS_PATH+"/../../examples/run_example_vgos.sh")
@@ -55,6 +58,11 @@ class BaseTest(unittest.TestCase):
             cls()._enable_output()
 
     def _find_last_output(self):
+
+        def _file_is_recent(file, seconds=RECENT_FILE_S):
+            file_time = os.path.getmtime(file)
+            return (time.time() - file_time) < seconds
+
         max_dir = None
         max_file = None
         max_mtime = 0
@@ -70,6 +78,8 @@ class BaseTest(unittest.TestCase):
                     max_file = fname
 
         found = max_dir+"/"+max_file
+        if not _file_is_recent(found):
+            raise Exception("File {} is too old, probably not from the last execution".format(found))
         return os.path.abspath(found)
 
     def run_pipeline_example(self, is_legacy=False):

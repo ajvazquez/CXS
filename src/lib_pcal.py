@@ -37,7 +37,6 @@ Phase calibration routines.
 from __future__ import print_function
 import fractions
 import numpy as np
-import imp
 
 
 

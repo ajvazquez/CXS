@@ -294,17 +294,12 @@ C_DIFX_INPUT_TELESCOPE_TABLE= "TELESCOPE TABLE"
 ###########################################
 #          Import
 ###########################################
-import imp
 # Constants for mapper and reducer
 
 if CX_IMPORT_CONST_MAPRED=="latest":
-    import const_mapred              # CX output separators and field locations (!) Make sure it is the same as used in correlation.
-    imp.reload(const_mapred)
-    from const_mapred import *
+    from const_mapred import *        # CX output separators and field locations (!) Make sure it is the same as used in correlation.
 
 elif CX_IMPORT_CONST_MAPRED=="2016.08.04":
-    import const_mapred_legacy_20160804            
-    imp.reload(const_mapred_legacy_20160804)
     from const_mapred_legacy_20160804 import *
 
 if CX_OVERRIDE_META_LEN>0:
@@ -313,13 +308,8 @@ if CX_OVERRIDE_META_LEN>0:
 #print("CX header version: "+CX_IMPORT_CONST_MAPRED)
 #print("CX meta len: "+str(META_LEN))
 
-import lib_ini_files                 # CX ini files
-imp.reload(lib_ini_files)
-from lib_ini_files import *
-
-import lib_acc_comp                  # CX accumulation periods
-imp.reload(lib_acc_comp)
-from lib_acc_comp import *
+from lib_ini_files import *          # CX ini files
+from lib_acc_comp import *           # CX accumulation periods
 
 import numpy as np
 import struct

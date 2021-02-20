@@ -38,12 +38,9 @@ from __future__ import print_function
 import os
 import time
 import sys
-import imp
-from lib_vdif import get_vdif_stats
 import numpy as np
 
-import const_hadoop
-imp.reload(const_hadoop)
+from lib_vdif import get_vdif_stats
 from const_hadoop import *
 
 

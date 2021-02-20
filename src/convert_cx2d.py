@@ -52,9 +52,6 @@ More info
 #initial version: 2016 ajva
 #MIT Haystack Observatory
 
-import imp
-import cx2d_lib
-imp.reload(cx2d_lib)
 from cx2d_lib import *
 
 import sys

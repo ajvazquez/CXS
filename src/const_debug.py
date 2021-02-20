@@ -34,9 +34,6 @@
 #initial version: 2016.11 ajva
 #MIT Haystack Observatory
 
-import imp
-import const_mapred
-imp.reload(const_mapred)
 from const_mapred import *
 
 

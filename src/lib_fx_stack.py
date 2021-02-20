@@ -37,26 +37,11 @@ CorrelX FX correlation and samples-stack routines.
 from __future__ import print_function,division
 import scipy.fftpack as scfft
 import numpy as np 
-import imp
 
-import const_mapred
-imp.reload(const_mapred)
 from const_mapred import *
-
-import lib_pcal
-imp.reload(lib_pcal)
 from lib_pcal import *
-
-import lib_delay_model
-imp.reload(lib_delay_model)
 from lib_delay_model import *
-
-import lib_debug
-imp.reload(lib_debug)
 from lib_debug import *
-
-import const_performance
-imp.reload(const_performance)
 from const_performance import *
 
 

@@ -53,7 +53,6 @@ Notes
 #MIT Haystack Observatory
 
 from __future__ import print_function
-import select
 import array
 import os
 import sys

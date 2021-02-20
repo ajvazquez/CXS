@@ -36,16 +36,10 @@ Management of CorrelX configuration files.
 
 from __future__ import print_function
 
-import imp
 import sys
 import os
 
-import const_config
-imp.reload(const_config)
 from const_config import *
-
-import const_hadoop
-imp.reload(const_hadoop)
 from const_hadoop import *
 
 

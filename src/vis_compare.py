@@ -39,6 +39,7 @@ import argparse
 import os
 import sys
 
+
 def main():
 
     cparser = argparse.ArgumentParser(description='CorrelX visibilities comparator:'+\

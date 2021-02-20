@@ -43,12 +43,7 @@ TO DO
 #MIT Haystack Observatory
 
 from __future__ import print_function,division
-import imp
 
-#from datetime import date
-
-import lib_ini_files
-imp.reload(lib_ini_files)
 from lib_ini_files import *
 
 try:

@@ -55,44 +55,24 @@ Notes
 from __future__ import print_function,division
 import sys
 import base64
-import imp
+import numpy as np
 
 import lib_quant
-imp.reload(lib_quant)
 from lib_quant import *
-
-
-
 import lib_fx_stack
-imp.reload(lib_fx_stack)
 from lib_fx_stack import *
 
 # Constants for mapper and reducer
-import const_mapred
-imp.reload(const_mapred)
 from const_mapred import *
-
-import lib_pcal
-imp.reload(lib_pcal)
 from lib_pcal import *
 
 # Vector quantization                           # VQ disabled
-#import lib_vq
-#imp.reload(lib_vq)
 #from lib_vq import *
 
-import lib_debug
-imp.reload(lib_debug)
 from lib_debug import *
-
-import const_performance
-imp.reload(const_performance)
 from const_performance import *
-
 from const_ini_files import *
 
-#import bitarray
-import numpy as np    
 
 
 

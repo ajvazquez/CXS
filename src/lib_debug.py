@@ -35,10 +35,7 @@ Routines for displaying debug information.
 #MIT Haystack Observatory
 
 from __future__ import print_function
-import imp
 
-import const_debug
-imp.reload(const_debug)
 from const_debug import *
 
 

@@ -38,19 +38,11 @@ from __future__ import print_function
 import sys
 import time
 import os
-import imp
 
 # Constants for mapper and reducer
-import const_mapred
-imp.reload(const_mapred)
 from const_mapred import *
-
-import const_hadoop
-imp.reload(const_hadoop)
 from const_hadoop import *
-
 import lib_profiling
-imp.reload(lib_profiling)
 
 
 

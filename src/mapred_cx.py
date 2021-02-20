@@ -63,36 +63,15 @@ from __future__ import print_function
 import sys
 import os
 import time
-import imp
 import argparse
 import numpy as np
 
-import const_config
-imp.reload(const_config)
 from const_config import *
-
-import const_hadoop
-imp.reload(const_hadoop)
 from const_hadoop import *
-
-import lib_config
-imp.reload(lib_config)
 from lib_config import *
-
-import lib_ini_exper
-imp.reload(lib_ini_exper)
 from lib_ini_exper import *
-
-import lib_mapredcorr
-imp.reload(lib_mapredcorr)
 from lib_mapredcorr import *
-
-import lib_hadoop_hdfs
-imp.reload(lib_hadoop_hdfs)
 from lib_hadoop_hdfs import *
-
-import lib_net_stats
-imp.reload(lib_net_stats)
 from lib_net_stats import *
 
 # Vector quantization                           # VQ disabled

@@ -62,29 +62,20 @@ Notes
 from __future__ import print_function,division
 import sys
 import base64
-import imp
 import os
 import numpy as np
 import scipy.fftpack
 
 # Library for reading VDIF files
 import lib_vdif
-imp.reload(lib_vdif)
 from lib_vdif import *
-
-import lib_pcal
-imp.reload(lib_pcal)
 from lib_pcal import *
 
 # Basic (de)quantizer
 # TO DO: use newer implementation for dequantizer
-import lib_quant
-imp.reload(lib_quant)
 from lib_quant import *
 
 # (De)serializer for info on scenario
-import lib_ini_files
-imp.reload(lib_ini_files)
 from lib_ini_files import *
 
 # Vector quantization                           # VQ disabled
@@ -93,27 +84,12 @@ from lib_ini_files import *
 #from lib_vq import *
 
 # Constants for mapper and reducer
-import const_mapred
-imp.reload(const_mapred)
 from const_mapred import *
 
 # Constants for performance
-import const_performance
-imp.reload(const_performance)
 from const_performance import *
-
-#from bitarray import bitarray
-
-import lib_acc_comp
-imp.reload(lib_acc_comp)
 from lib_acc_comp import *
-
-import lib_delay_model
-imp.reload(lib_delay_model)
 from lib_delay_model import *
-
-import lib_debug
-imp.reload(lib_debug)
 from lib_debug import *
 
 PY3 = sys.version_info[0] == 3

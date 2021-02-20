@@ -36,11 +36,8 @@ Module with basic quantizer and dequantizer.
 
 from __future__ import print_function
 import numpy as np
-import imp
 
 # Quantization levels
-import const_quant
-imp.reload(const_quant)
 from const_quant import *
 
 

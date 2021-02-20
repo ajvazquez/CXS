@@ -52,18 +52,9 @@ from scipy.fftpack import fft,ifft
 from scipy import signal
 from datetime import date,datetime
 
-from bitarray import bitarray
 
-import imp
-
-import lib_vdif
-imp.reload(lib_vdif)
 from lib_vdif import *
-
-import lib_channelized_signals
-imp.reload(lib_channelized_signals)
 from lib_channelized_signals import *
-
 from lib_quant import *
 
   

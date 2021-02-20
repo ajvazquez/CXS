@@ -36,7 +36,6 @@ Script for reading metadata from VDIF file.
 
 import lib_vdif
 import argparse
-import sys
 
 def main():
 

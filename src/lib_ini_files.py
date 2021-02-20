@@ -58,13 +58,10 @@ Regarding initialization files
 
 from __future__ import print_function
 
-import imp
 import sys
 import os
 import numpy as np
 
-import const_ini_files
-imp.reload(const_ini_files)
 from const_ini_files import *
 
 

@@ -35,24 +35,14 @@ Routines for processing the experiment configuration.
 #MIT Haystack Observatory
 
 from __future__ import print_function
-
-import imp
 import sys
 import os
 
-
-import lib_ini_files
-imp.reload(lib_ini_files)
 from lib_ini_files import *
 
 import lib_delay_model
-imp.reload(lib_delay_model)
-
 import lib_vdif
-imp.reload(lib_vdif)
-
 import lib_acc_comp
-imp.reload(lib_acc_comp)
 
 
 ##################################################################

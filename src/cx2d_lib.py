@@ -652,7 +652,7 @@ def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src=""):
          continue execution even if metadata differ.
      path_src : str
          path to location of source file const_mapred.py.
-     
+
     Returns
     -------
      None
@@ -712,7 +712,8 @@ def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src=""):
     else:
         print(" Num. coefficients per vis.:".ljust(jv)+"N/A")
         print(" Total error:".ljust(jv)+"N/A")
-
+        acc_res = None
+    return acc_res
 
 
 def plot_vis_cx(file_input,title_figure,mode_in="px",max_lines=-2,interval_start=0,\

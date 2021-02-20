@@ -228,7 +228,11 @@ if __name__ == '__main__':
     cparser.add_argument('-s', action="store",\
                          dest="output_log_folder",default=output_log_folder,\
                          help="Specify a folder to store the output log files.")
-    
+
+    cparser.add_argument('--sort-numeric-pipeline', action="store_true", \
+                         dest="sort_numeric_pipeline",default=False, \
+                         help="Sort pipeline intermediate keys numerically.")
+
     # Forced parameters (for overriding configuration from the configuration file)
     cparser.add_argument('-f', action="store",\
                          dest="forced_params",default=forced_params,\
@@ -245,6 +249,7 @@ if __name__ == '__main__':
     config_file = args.configuration_file
     output_log_folder = args.output_log_folder
     forced_params = args.forced_params
+    sort_numeric = args.sort_numeric_pipeline
 
     nodes_list = args.nodes_list
     NODES_LIST=nodes_list.split(',')
@@ -459,7 +464,8 @@ if __name__ == '__main__':
                                                                      single_precision=SINGLE_PRECISION,\
                                                                      profile_map=PROFILE_MAP,\
                                                                      profile_red=PROFILE_RED,\
-                                                                     timestamp_str=timestamp_str)
+                                                                     timestamp_str=timestamp_str,
+                                                                     sort_numeric=sort_numeric)
                         
             
                         

@@ -299,7 +299,8 @@ def pipeline_app(python_x,stations,input_files,app_dir,mapper,reducer,fft_size,f
                  file_out="vt4.txt",ini_stations="none",\
                  ini_media="none",ini_delays="none",internal_log_mapper=1,internal_log_reducer=1,ffts_per_chunk=1,\
                  windowing="square",one_baseline_per_task=True,phase_calibration=0,min_mapper_chunk=-1,\
-                 max_mapper_chunk=-1,task_scaling_stations=0,sort_output=1,single_precision=0,profile_map=0,profile_red=0,timestamp_str=""):
+                 max_mapper_chunk=-1,task_scaling_stations=0,sort_output=1,single_precision=0,profile_map=0,profile_red=0,timestamp_str="",
+                 sort_numeric=False):
     """
     Perform correlation through pipeline execution (that is, without hadoop). All the data is passed through the mapper, 
     then the results are sorted and passed through the reducer.
@@ -447,7 +448,10 @@ def pipeline_app(python_x,stations,input_files,app_dir,mapper,reducer,fft_size,f
     # Reduce (includes sorting and reducing)
     command+= " cat " + files_out_str
     #command+= "|sort -t"+FIELD_SEP+" -k1 -k2 -k3 -k4 -k5 -k6 -k7 -k8 -k9 >" + output_dir + file_out + "_tmp"
-    command+= "|sort -t"+FIELD_SEP+" "+COMMON_SORT_ALL_BASELINES_PER_TASK_STR+" >" + output_dir + file_out + "_tmp"
+    SORT_NUMERIC_STR = ""
+    if sort_numeric:
+        SORT_NUMERIC_STR = "-n "
+    command+= "|sort -t"+FIELD_SEP+" "+SORT_NUMERIC_STR+COMMON_SORT_ALL_BASELINES_PER_TASK_STR+" >" + output_dir + file_out + "_tmp"
     command += " && cat "+ output_dir + file_out +"_tmp|"
     if profile_red==1:
         i_args = lib_profiling.get_include_functions(str(app_dir+reducer))

@@ -1,17 +1,32 @@
-![alt tag](https://github.com/MITHaystack/CorrelX/blob/master/gen-docs/correlx-logo.jpg)
+# CXS338
 
-### **CorrelX**: A Cloud-Based Software Correlator for Very Long Baseline Interferometry (VLBI)
+The project CXS338 is a fork of [MIT Haystack's CorrelX](https://github.com/MITHaystack/CorrelX/) VLBI Correlator, developed by [ajvazquez](https://github.com/ajvazquez) on a postdoctoral research position at MIT Haystack back in 2015-2017.
 
-- [Slides-Overview](https://github.com/MITHaystack/CorrelX/blob/master/correlx-slides.pdf)
-- [User & Developer Guide](https://github.com/MITHaystack/CorrelX/blob/master/correlx-user-developer-guide.pdf)
-- [Code Documentation](https://mithaystack.github.io/CorrelX)
-- [Demo Videos](https://github.com/MITHaystack/CorrelX/tree/master/demo-videos)
+This project (CXS338) starts as a migration of CorrelX to run on Spark as part of a Masters' Thesis on Big Data by this author in 2021, as a proof of concept with the following objectives:
+* Migration from python2 to python3.
+* Migration from Hadoop to Spark.
+* Running a test correlation on a cloud computing service.
 
-_Project leads: [Victor Pankratius](http://www.victorpankratius.com), Pedro Elosegui._<br>
-_Project developer: [Antonio Vazquez Alvarez](https://www.linkedin.com/in/ajvazquezalvarez)_
+## Versions
+
+About the naming convention:
+* CXH227: CorrelX on Hadoop 2, Python 2.7 ([CorrelX legacy](https://github.com/MITHaystack/CorrelX/)).
+* CXS338: CorrelX on Spark 3, Python 3.8.
+
+## Configuration
+
+```
+cd src
+virtualenv -p python3 venv3
+source venv3/bin/activate
+pip install -r ../requirements.txt
+```
 
 
-![alt tag](https://github.com/MITHaystack/CorrelX/blob/master/gen-docs/correlx-image.jpg)
+## Tests
 
-
-:+1: *Acknowledgements: We would like to thank the MIT Haystack Observatory staff, in particular Alan Rogers and Roger Capallo for invaluable help during developing and testing, and John Barrett, Geoff Crew, Michael Gowanlock, Justin Li, Guillaume Rongier, Cody Rude, Arthur Niell, and Mike Titus for generous feedback, and Nancy Kotary for editing support. We acknowledge partial support from the NASA Space Geodesy Program and the NSF for supporting the Massachusetts Green High Performance Computing Center for our experiments in Holyoke, Massachusetts.*
+```
+cd src
+source venv3/bin/activate
+python -m unittest discover -s .
+```

@@ -5,6 +5,8 @@ import sys
 
 from cx2d_lib import get_error_indicator
 
+PY3 = sys.version_info[0] == 3
+
 
 THIS_PATH = os.path.dirname(os.path.realpath(__file__))
 PATH_EXAMPLE = os.path.abspath(THIS_PATH+"/../../examples/run_example_vgos.sh")
@@ -14,8 +16,13 @@ PATH_SRC = THIS_PATH+"/../../src"
 
 EXAMPLES = THIS_PATH+"/../../examples/test_dataset_vgos/example_output/"
 
+REF_FILE_PY2_LEGACY = EXAMPLES + "OUT_s0_v0_python2_sort_legacy.out"
+REF_FILE_PY3_LEGACY = EXAMPLES + "OUT_s0_v0_python3_sort_legacy.out"
 
-REF_FILE = EXAMPLES + "OUT_s0_v0.out"
+if not PY3:
+    REF_FILE = EXAMPLES + "OUT_s0_v0.out"
+else:
+    REF_FILE = EXAMPLES + "OUT_s0_v0_python3_sort_legacy.out"
 
 
 class BaseTest(unittest.TestCase):
@@ -23,15 +30,24 @@ class BaseTest(unittest.TestCase):
     VERBOSE = True
 
     def _enable_output(self):
+        try:
+            sys.stdout.close()
+        except:
+            pass
         sys.stdout = sys.__stdout__
 
     def _disable_output(self):
         sys.stdout = open(os.devnull, 'w')
 
-    def __init__(self, *args, **kwargs):
-        super(BaseTest, self).__init__(*args, **kwargs)
+    def setUp(self):
+        super().setUp()
         if not self.VERBOSE:
             self._disable_output()
+
+    def tearDown(self):
+        super().tearDown()
+        if not self.VERBOSE:
+            self._enable_output()
 
     def _find_last_output(self):
         max_dir = None
@@ -71,5 +87,8 @@ class BaseTest(unittest.TestCase):
                 print(stderr)
         return self._find_last_output()
 
+    def compare_results(self, file_a, file_b):
+        return get_error_indicator(file_a, file_b, force=False, path_src=PATH_SRC)
+
     def check_result(self, result):
-        return get_error_indicator(REF_FILE, result, force=False, path_src=PATH_SRC)
+        return self.compare_results(REF_FILE, result)

@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 #The MIT CorrelX Correlator
 #
@@ -628,25 +623,28 @@ def get_lines_stats(current_key_pair_accu,F_stack_shift,F_adj_shift_partial,F_lt
 #                   Main
 ###########################################
 
-def main():
-    
-    no_data=1
-    
+
+def rsvf(codecs_serial,
+         FFT_HERE,
+         INTERNAL_LOG,
+         FFT_SIZE_IN,
+         WINDOWING,
+         PHASE_CALIBRATION,
+         SINGLE_PRECISION,
+         lines=None,
+         group_output=False):
+
+    output = None
+    if group_output:
+        output = []
+
+    no_data = 1
+
     # Moved into lib_fx_stack
-    #if use_fftw:
+    # if use_fftw:
     #    pyfftw.interfaces.cache.enable()
     #    pyfftw.interfaces.cache.set_keepalive_time(20)
-    
-    
-    # Read parameters                       # See lib_mapredcorr.get_reducer_params_str() for interface documentation.
-    codecs_serial=        sys.argv[1]
-    FFT_HERE=         int(sys.argv[2])
-    INTERNAL_LOG=     int(sys.argv[3])
-    FFT_SIZE_IN=      int(sys.argv[4])         
-    WINDOWING=            sys.argv[5]
-    PHASE_CALIBRATION=int(sys.argv[6])
-    SINGLE_PRECISION= int(sys.argv[7])
-    
+
     # FFT size
     FFT_SIZE=FFT_SIZE_IN                    # For real data will use 2x fft_size, assuming all data is real xor complex
     #                                         See update_stored_samples where this is overriden
@@ -701,7 +699,10 @@ def main():
 
     
     # Default: use stdin
-    f_in=sys.stdin
+    if lines:
+        f_in = lines
+    else:
+        f_in=sys.stdin
     
     counter_sub_acc=0
 
@@ -741,8 +742,12 @@ def main():
     
         # Just bypass lines into output and exit
         for line in f_in:
-            line = line.strip()  
-            print("zR-Debug mode"+KEY_SEP+line)
+            line = line.strip()
+            str_out = "zR-Debug mode"+KEY_SEP+line
+            if group_output:
+                output.append(str_out)
+            else:
+                print(str_out)
     
     
     else:
@@ -763,11 +768,19 @@ def main():
             # Checks for bypassing previous log/error lines
             if line[0]=='z':
                 # Error Message, just copy to output and keep processing
-                print(line.strip())
+                str_out = line.strip()
+                if group_output:
+                    output.append(str_out)
+                else:
+                    print(str_out)
                 continue
             elif line[0]!='p':
                 # Ignore line
-                print("zRz"+KEY_SEP+"Ignored line:"+line.strip())
+                str_out = "zRz"+KEY_SEP+"Ignored line:"+line.strip()
+                if group_output:
+                    output.append(str_out)
+                else:
+                    print(str_out)
                 continue
             
 
@@ -784,11 +797,19 @@ def main():
                 
             except ValueError:
                 # Error in key
-                print("zRz"+KEY_SEP+"Value error (kv):"+line.strip())
+                str_out = "zRz"+KEY_SEP+"Value error (kv):"+line.strip()
+                if group_output:
+                    output.append(str_out)
+                else:
+                    print(str_out)
                 continue
             except TypeError:
                 # Error in base64 decoding
-                print("zRz"+KEY_SEP+"Type error (b64):"+line.strip())
+                str_out = "zRz"+KEY_SEP+"Type error (b64):"+line.strip()
+                if group_output:
+                    output.append(str_out)
+                else:
+                    print(str_out)
                 continue
             
            
@@ -881,9 +902,11 @@ def main():
                                                           count_acc_pcal,current_scaling_pair)
                         if lines_out!=[]:
                             for line_out in lines_out:
-                                print(line_out)
-                        
-                        
+                                if group_output:
+                                    output.append(line_out)
+                                else:
+                                    print(line_out)
+
                         ##########
                         #  Stats
                         ##########
@@ -895,8 +918,11 @@ def main():
                                             current_block_first_sample,dismissed_acc_count)
                         if lines_stats!=[]:
                             for line_stats in lines_stats:
-                                print(line_stats)
-                        
+                                if group_output:
+                                    output.append(line_stats)
+                                else:
+                                    print(line_stats)
+
    
                         failed_acc_count=0
                         dismissed_acc_count=0
@@ -1140,15 +1166,30 @@ def main():
                                                                   current_block_first_sample,acc_pcal,count_acc_pcal,current_vector_split)
                                 if lines_out!=[]:
                                     for line_out in lines_out:
-                                        print(line_out)
-                                
+                                        if group_output:
+                                            output.append(line_out)
+                                        else:
+                                            print(line_out)
 
-                                print("zR"+KEY_SEP+"kpa="+current_key_pair_accu+",Adjusted stack=["+','.join(map(str,map(int,F_stack_shift)))+"]")
-                                print("zR"+KEY_SEP+"kpa="+current_key_pair_accu+",Adjusted shifts=["+','.join(map(str,map(int,F_adj_shift_partial)))+"]")
-                                
+
+                                line_out = "zR"+KEY_SEP+"kpa="+current_key_pair_accu+",Adjusted stack=["+','.join(map(str,map(int,F_stack_shift)))+"]"
+                                if group_output:
+                                    output.append(line_out)
+                                else:
+                                    print(line_out)
+                                line_out = "zR"+KEY_SEP+"kpa="+current_key_pair_accu+",Adjusted shifts=["+','.join(map(str,map(int,F_adj_shift_partial)))+"]"
+                                if group_output:
+                                    output.append(line_out)
+                                else:
+                                    print(line_out)
+
                                 if (failed_acc_count>0)or(dismissed_acc_count>0):
-                                    print("zR"+KEY_SEP+"Failed accs="+str(failed_acc_count)+",dismissed accs="+str(dismissed_acc_count)+",in=a"+current_block_first_sample)
-                                          
+                                    line_out = "zR"+KEY_SEP+"Failed accs="+str(failed_acc_count)+",dismissed accs="+str(dismissed_acc_count)+",in=a"+current_block_first_sample
+                                    if group_output:
+                                        output.append(line_out)
+                                    else:
+                                        print(line_out)
+
                                     failed_acc_count=0
                                     dismissed_acc_count=0
                                 acc_mat=None
@@ -1158,8 +1199,11 @@ def main():
                             
                                 accu_prod_div = normalize_mat(accu_prod,count_acc)
                                 str_print = get_str_r_out(current_key_pair_accu,count_acc,current_vector_split,current_block_first_sample,accu_prod_div)
-                                print(str_print)
-                                
+                                if group_output:
+                                    output.append(str_print)
+                                else:
+                                    print(str_print)
+
                                 # Print phase calibration results
                                 if acc_pcal!=[]:
                                     # TO DO: phase calibration currently disabled?
@@ -1171,7 +1215,10 @@ def main():
                                     ##str_print = "pcal"+current_key_pair_accu[2:]+'sxa'+str(count_acc)+'\t'+' '.join(current_vector_split[:(META_LEN-1)])+' '+current_block_first_sample+' '+' '.join(map(str, acc_pcal_div))
                                     ##
                                     str_print = get_str_pcal_out(acc_pcal,current_n_bins_pcal,count_acc_pcal,current_key_pair_accu,current_vector_split,current_block_first_sample)
-                                    print(str_print)
+                                    if group_output:
+                                        output.append(str_print)
+                                    else:
+                                        print(str_print)
 
 
                     
@@ -1321,9 +1368,11 @@ def main():
                                                           current_block_first_sample,current_vector_split,acc_pcal,count_acc_pcal,current_scaling_pair)
                     if lines_out!=[]:
                         for line_out in lines_out:
-                            print(line_out)
-                    
-                    
+                            if group_output:
+                                output.append(line_out)
+                            else:
+                                print(line_out)
+
                     ##########
                     #  Stats
                     ##########
@@ -1332,8 +1381,11 @@ def main():
                                             current_block_first_sample,dismissed_acc_count)   
                     if lines_stats!=[]:
                         for line_stats in lines_stats:
-                            print(line_stats)
-                    
+                            if group_output:
+                                output.append(line_stats)
+                            else:
+                                print(line_stats)
+
 
                     failed_acc_count=0
                     dismissed_acc_count=0 
@@ -1342,10 +1394,11 @@ def main():
                     
                 else:
                     str_print = line
-                    print(str_print) 
-                    
+                    if group_output:
+                        output.append(str_print)
+                    else:
+                        print(str_print)
 
-                
                 # TODO: last print for pcal?? Already in previous block?
                 
             else:
@@ -1357,21 +1410,63 @@ def main():
                 
                 else:
                     str_print = line
-                print(str_print)
+                if group_output:
+                    output.append(str_print)
+                else:
+                    print(str_print)
                 # Print phase calibration results
                 if acc_pcal!=[]:
                     str_print = get_str_pcal_out(acc_pcal,current_n_bins_pcal,count_acc_pcal,current_key_pair_accu,current_vector_split,current_block_first_sample)
-                    print(str_print)
+                    if group_output:
+                        output.append(str_print)
+                    else:
+                        print(str_print)
                     acc_pcal=np.array([])
                     pre_pcal = np.array([])
 
 
     if no_data==1:
-        print("zR"+KEY_SEP+"No data")
+        str_print = "zR"+KEY_SEP+"No data"
+        if group_output:
+            output.append(str_print)
+        else:
+            print(str_print)
+    return output
 
 
-        
-        
+def main():
+    # Read parameters                       # See lib_mapredcorr.get_reducer_params_str() for interface documentation.
+    codecs_serial=        sys.argv[1]
+    FFT_HERE=         int(sys.argv[2])
+    INTERNAL_LOG=     int(sys.argv[3])
+    FFT_SIZE_IN=      int(sys.argv[4])
+    WINDOWING=            sys.argv[5]
+    PHASE_CALIBRATION=int(sys.argv[6])
+    SINGLE_PRECISION= int(sys.argv[7])
+
+    return rsvf(codecs_serial,
+                FFT_HERE,
+                INTERNAL_LOG,
+                FFT_SIZE_IN,
+                WINDOWING,
+                PHASE_CALIBRATION,
+                SINGLE_PRECISION)
+
+
+def fun_reducer(config_gen, config_ini, lines, codecs_serial=None):
+
+    return rsvf(
+        codecs_serial,
+        int(not(config_gen.fft_at_mapper)),
+        config_gen.internal_log_reducer,
+        config_ini.fft_size,
+        config_ini.windowing,
+        config_ini.phase_calibration,
+        config_gen.single_precision,
+        lines=lines,
+        group_output=True)
+
+
 if __name__ == '__main__':
     main()
 

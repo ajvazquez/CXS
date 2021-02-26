@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 #The MIT CorrelX Correlator
 #
@@ -101,6 +96,13 @@ PY3 = sys.version_info[0] == 3
 # TO DO: define constants for "zM" and "zR"
 
 
+def gen_output_record(pair_str, str_print):
+    pair_split = pair_str.split(KEY_SEP)[0].split(FIELD_SEP)
+    #return [FIELD_SEP.join(pair_split[:5]), FIELD_SEP.join(pair_split[5:]), str_print]
+    #return [pair_str.split(KEY_SEP)[0], [str_print]]
+    #return [FIELD_SEP.join(pair_split[:5]), [str_print]] # ok
+    return [FIELD_SEP.join(pair_split[:7]), [str_print]] # ok
+    #return [FIELD_SEP.join(pair_split[:5]), FIELD_SEP.join(pair_split[5:]), [str_print]]
 
 
 ###########################################
@@ -108,16 +110,18 @@ PY3 = sys.version_info[0] == 3
 ###########################################
 
 
-def get_current_filename():
+def get_current_filename(forced_filename=None):
     """
     Get the name of the file currently being processed from the environment variable.
     Note this is only for hadoop, thus the variable has to be created if running in pipeline, (which
         is already done in lib_mapredcorr.py.
     """
-    
-    file_name = str(os.environ.get(MAP_INPUT_FILE))
-    if file_name!="None":
-        file_name=file_name.split('/')[-1]
+    if forced_filename is not None:
+        file_name = forced_filename
+    else:
+        file_name = str(os.environ.get(MAP_INPUT_FILE))
+        if file_name!="None":
+            file_name=file_name.split('/')[-1]
     return(file_name)
 
 
@@ -556,8 +560,8 @@ def read_frame(reader,show_errors,forced_frame_length=0,forced_format=C_INI_MEDI
     # Other cases: f,show_errors=0,forced_frame_length=0,offset_bytes=0,encode_int=0
     if other_cases==1:
         [header,allsamples,check_size_samples] = lib_vdif.read_vdif_frame(f=reader,show_errors=show_errors,forced_frame_length=forced_frame_length,v=VERBOSE_MAPPER_IO)
-    
-    
+
+
     return([header,allsamples,check_size_samples])
 
 
@@ -1143,41 +1147,41 @@ def get_codebook_info(codecs_serial,params_media,current_file_name,station_name,
 ###########################################
 
 
-def main():
+def msvf(tot_stations,
+         tot_pols,
+         chunk_size_in,
+         accumulation_time_str,
+         seconds_ref,
+         seconds_duration,
+         first_frame_num,
+         num_frames,
+         auto_stations,
+         auto_pols,
+         use_ini_info,
+         ini_stations,
+         ini_media,
+         ini_delays,
+         codecs_serial,
+         FFT_HERE,
+         INTERNAL_LOG,
+         FFTS_PER_CHUNK,
+         WINDOWING,
+         ONE_BASELINE_PER_TASK,
+         PHASE_CALIBRATION,
+         MIN_MAPPER_CHUNK,
+         MAX_MAPPER_CHUNK,
+         TASK_SCALING_STATIONS,
+         SINGLE_PRECISION,
+         group_output=False,
+         reader=None,
+         forced_filename=None):
 
+    output = None
+    if group_output:
+        output = []
     read_rest=0
     first_sample_signal=0
 
-
-    # Read parameters                                  # See lib_mapredcorr.get_mapper_params_str() for interface documentation.
-    tot_stations =            int(sys.argv[1])                 
-    tot_pols =                int(sys.argv[2])                     
-    chunk_size_in =           int(sys.argv[3])               
-    accumulation_time_str =       sys.argv[4]
-    seconds_ref =             int(sys.argv[5])                
-    seconds_duration =      float(sys.argv[6])
-    first_frame_num =         int(sys.argv[7])
-    num_frames =              int(sys.argv[8])
-    auto_stations =           int(sys.argv[9]) 
-    auto_pols =               int(sys.argv[10])
-    use_ini_info =            int(sys.argv[11])
-    ini_stations =                sys.argv[12]
-    ini_media =                   sys.argv[13]
-    ini_delays =                  sys.argv[14]
-    codecs_serial =               sys.argv[15]
-    FFT_HERE =                int(sys.argv[16])
-    INTERNAL_LOG =            int(sys.argv[17]) 
-    FFTS_PER_CHUNK =          int(sys.argv[18]) 
-    WINDOWING =                   sys.argv[19]
-    ONE_BASELINE_PER_TASK =   int(sys.argv[20])
-    PHASE_CALIBRATION =       int(sys.argv[21])
-    MIN_MAPPER_CHUNK =        int(sys.argv[22])
-    MAX_MAPPER_CHUNK =        int(sys.argv[23])
-    TASK_SCALING_STATIONS =   int(sys.argv[24])
-    SINGLE_PRECISION =        int(sys.argv[25]) # Currently not used. TO DO: use for FFT at mapper
-    
-    
-    
     # Experiment configuration
     # Initialization files
     stations_serial_str=serialize_config(ini_stations)
@@ -1214,8 +1218,8 @@ def main():
 
 
     # Name of file currently being processed
-    current_file_name = get_current_filename()
-    
+    current_file_name = get_current_filename(forced_filename)
+
 
 
     print_el=0               # used in debugging
@@ -1255,9 +1259,10 @@ def main():
         
     
     # Hadoop reads from stdin
-    reader = sys.stdin
-    if PY3:
-        reader = open(sys.stdin.fileno(), "rb", 0, closefd=False)
+    if reader is None:
+        reader = sys.stdin
+        if PY3:
+            reader = open(sys.stdin.fileno(), "rb", 0, closefd=False)
 
 
     ###################################
@@ -1787,7 +1792,10 @@ def main():
                                                     signal_chunk_fft_out = signal_chunk_fft_out.decode("utf-8")
                                                 str_print = pair_str+signal_chunk_fft_out
                                                 if SILENT_OUTPUT==0:
-                                                    print(str_print)
+                                                    if group_output:
+                                                        output.append(gen_output_record(pair_str, str_print))
+                                                    else:
+                                                        print(str_print)
                                                 else:
                                                     count_print+=1
                                             else: 
@@ -1813,7 +1821,10 @@ def main():
                                                                          num_samples_in_chunk,abs_delay,rate_delay,freq_channel,\
                                                                          fractional_sample_delay,accumulation_time,shift_int,sideband)
                                                             str_print = pair_str+signal_chunk_fft_out
-                                                            print(str_print)
+                                                            if group_output:
+                                                                output.append(gen_output_record(pair_str, str_print))
+                                                            else:
+                                                                print(str_print)
                                             
                                         else:
                                         
@@ -1839,7 +1850,10 @@ def main():
                                                                         num_samples_in_chunk,abs_delay,rate_delay,freq_channel,\
                                                                         fractional_sample_delay,accumulation_time,shift_int,sideband)
                                                     str_print = pair_str+signal_chunk_fft_out
-                                                    print(str_print)
+                                                    if group_output:
+                                                        output.append(gen_output_record(pair_str, str_print))
+                                                    else:
+                                                        print(str_print)
 
             else:
                 error_frame = C_M_READ_ERR_HEADER_NONE
@@ -1863,11 +1877,105 @@ def main():
             error_reading_rest=1
             #print("zM"+KEY_SEP+"EOF reading rest of file "+current_file_name)
 
+    return output
+
             
                         
+def main():
+    # Read parameters                                  # See lib_mapredcorr.get_mapper_params_str() for interface documentation.
+    tot_stations = int(sys.argv[1])
+    tot_pols = int(sys.argv[2])
+    chunk_size_in = int(sys.argv[3])
+    accumulation_time_str = sys.argv[4]
+    seconds_ref = int(sys.argv[5])
+    seconds_duration = float(sys.argv[6])
+    first_frame_num = int(sys.argv[7])
+    num_frames = int(sys.argv[8])
+    auto_stations = int(sys.argv[9])
+    auto_pols = int(sys.argv[10])
+    use_ini_info = int(sys.argv[11])
+    ini_stations = sys.argv[12]
+    ini_media = sys.argv[13]
+    ini_delays = sys.argv[14]
+    codecs_serial = sys.argv[15]
+    FFT_HERE = int(sys.argv[16])
+    INTERNAL_LOG = int(sys.argv[17])
+    FFTS_PER_CHUNK = int(sys.argv[18])
+    WINDOWING = sys.argv[19]
+    ONE_BASELINE_PER_TASK = int(sys.argv[20])
+    PHASE_CALIBRATION = int(sys.argv[21])
+    MIN_MAPPER_CHUNK = int(sys.argv[22])
+    MAX_MAPPER_CHUNK = int(sys.argv[23])
+    TASK_SCALING_STATIONS = int(sys.argv[24])
+    SINGLE_PRECISION = int(sys.argv[25])  # Currently not used. TO DO: use for FFT at mapper
+
+    return msvf(tot_stations,
+                tot_pols,
+                chunk_size_in,
+                accumulation_time_str,
+                seconds_ref,
+                seconds_duration,
+                first_frame_num,
+                num_frames,
+                auto_stations,
+                auto_pols,
+                use_ini_info,
+                ini_stations,
+                ini_media,
+                ini_delays,
+                codecs_serial,
+                FFT_HERE,
+                INTERNAL_LOG,
+                FFTS_PER_CHUNK,
+                WINDOWING,
+                ONE_BASELINE_PER_TASK,
+                PHASE_CALIBRATION,
+                MIN_MAPPER_CHUNK,
+                MAX_MAPPER_CHUNK,
+                TASK_SCALING_STATIONS,
+                SINGLE_PRECISION)
+
+
+def fun_mapper(config_gen, config_ini, f, f_name):
+    # TODO: specify names of args
+    return msvf(config_ini.stations,
+         config_ini.num_pols,
+         config_ini.fft_size,
+         config_ini.accumulation_time,
+         config_ini.signal_start,
+         config_ini.signal_duration,
+         config_ini.first_frame_num,
+         config_ini.num_frames,
+         config_ini.auto_stations,
+         config_ini.auto_pols,
+         1,
+         # TODO: full folder...
+         #config_gen.ini_stations.split("/")[-1],
+         #config_gen.ini_media.split("/")[-1],
+         #config_gen.ini_delays.split("/")[-1],
+         config_gen.ini_stations,
+         config_gen.ini_media,
+         config_gen.ini_delays,
+         "",
+         config_gen.fft_at_mapper,
+         config_gen.internal_log_mapper,
+         config_gen.ffts_per_chunk,
+         config_ini.windowing,
+         config_gen.one_baseline_per_task,
+         config_ini.phase_calibration,
+         config_gen.min_mapper_chunk,
+         config_gen.max_mapper_chunk,
+         config_gen.task_scaling_stations,
+         config_gen.single_precision,
+         group_output=True,
+         reader=f,
+         forced_filename=f_name)
+
+
 if __name__ == '__main__':
     main()
 
 # <codecell>
+
 
 

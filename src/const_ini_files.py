@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 #The MIT CorrelX Correlator
 #
@@ -241,4 +236,37 @@ DELAY_MODEL_DDD_MARKER="dd."    # delta reference delay for ref station
 DELAY_MODEL_DI_MARKER="di."     # TO DO: DELETE? delay info (aiming to avoid overhead)
 DELAY_MODEL_SIM_MARKER="si."    # header in delay model (for debugging)
 
+
+
+class ConfigIni(object):
+
+    def __init__(self, stations_serial_str,media_serial_str,correlation_serial_str,delays_serial_str, \
+                 auto_stations, auto_pols, fft_size, accumulation_time, stations, ref_epoch, signal_start, signal_duration,input_files, \
+                 first_frame_num,num_frames,codecs_serial,max_packet_size,total_frames,total_partitions,windowing, \
+                 phase_calibration,delay_error,error_str_v,num_pols):
+
+        self.stations_serial_str = stations_serial_str
+        self.media_serial_str = media_serial_str
+        self.correlation_serial_str = correlation_serial_str
+        self.delays_serial_str = delays_serial_str
+        self.auto_stations = auto_stations
+        self.auto_pols = auto_pols
+        self.fft_size = fft_size
+        self.accumulation_time = accumulation_time
+        self.stations = stations
+        self.ref_epoch = ref_epoch
+        self.signal_start = signal_start
+        self.signal_duration = signal_duration
+        self.input_files = input_files
+        self.first_frame_num = first_frame_num
+        self.num_frames = num_frames
+        self.codecs_serial = codecs_serial
+        self.max_packet_size = max_packet_size
+        self.total_frames = total_frames
+        self.total_partitions = total_partitions
+        self.windowing = windowing
+        self.phase_calibration = phase_calibration
+        self.delay_error = delay_error
+        self.error_str_v = error_str_v
+        self.num_pols = num_pols
 

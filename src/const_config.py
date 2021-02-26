@@ -219,3 +219,144 @@ C_ARG_SHUFFLE_PORT =            "shuffleport"        # Nodemanager shuffle port 
 #
 #  Use localhost in configuration file to be replaced during execution by master name [see lib_config.get_config_mod_for_this_master()].
 
+
+class ConfigGen(object):
+
+    def __init__(self,
+                 mapper,
+                 reducer,
+                 dependencies,
+                 packets_per_hdfs_block,
+                 checksum_size,
+                 src_dir,
+                 app_dir,
+                 conf_dir,
+                 templates_conf_dir,
+                 templates_env_dir,
+                 hadoop_dir,
+                 hadoop_conf_dir,
+                 nodes,
+                 mappersh,
+                 reducersh,
+                 jobsh,
+                 python_x,
+                 username_machines,
+                 max_slaves,
+                 slaves,
+                 masters,
+                 master_is_slave,
+                 hadoop_temp_dir,
+                 data_dir,
+                 data_dir_tmp,
+                 hdfs_data_dir,
+                 hadoop_start_delay,
+                 hadoop_stop_delay,
+                 prefix_output,
+                 hadoop_text_delimiter,
+                 output_dir,
+                 output_sym,
+                 run_pipeline,
+                 run_hadoop,
+                 max_cpu_vcores,
+                 hdfs_replication,
+                 over_slurm,
+                 hdfs_copy_delay,
+                 fft_at_mapper,
+                 ini_folder,
+                 ini_stations,
+                 ini_sources,
+                 ini_delay_model,
+                 ini_delays,
+                 ini_media,
+                 ini_correlation,
+                 internal_log_mapper,
+                 internal_log_reducer,
+                 adjust_mappers,
+                 adjust_reducers,
+                 ffts_per_chunk,
+                 text_mode,
+                 use_nohash_partitioner,
+                 use_lustre_plugin,
+                 lustre_user_dir,
+                 lustra_prefix,
+                 one_baseline_per_task,
+                 min_mapper_chunk,
+                 max_mapper_chunk,
+                 task_scaling_stations,
+                 sort_output,
+                 bm_avoid_copy,
+                 bm_delete_output,
+                 timeout_stop,
+                 single_precision,
+                 profile_map,
+                 profile_red,
+                 ):
+
+        self.mapper = mapper
+        self.reducer = reducer
+        self.dependencies = dependencies
+        self.packets_per_hdfs_block = packets_per_hdfs_block
+        self.checksum_size = checksum_size
+        self.src_dir = src_dir
+        self.app_dir = app_dir
+        self.conf_dir = conf_dir
+        self.templates_conf_dir = templates_conf_dir
+        self.templates_env_dir = templates_env_dir
+        self.hadoop_dir = hadoop_dir
+        self.hadoop_conf_dir = hadoop_conf_dir
+        self.nodes = nodes
+        self.mappersh = mappersh
+        self.reducersh = reducersh
+        self.jobsh = jobsh
+        self.python_x = python_x
+        self.username_machines = username_machines
+        self.max_slaves = max_slaves
+        self.slaves = slaves
+        self.masters = masters
+        self.master_is_slave = master_is_slave
+        self.hadoop_temp_dir = hadoop_temp_dir
+        self.data_dir = data_dir
+        self.data_dir_tmp = data_dir_tmp
+        self.hdfs_data_dir = hdfs_data_dir
+        self.hadoop_start_delay = hadoop_start_delay
+        self.hadoop_stop_delay = hadoop_stop_delay
+        self.prefix_output = prefix_output
+        self.hadoop_text_delimiter = hadoop_text_delimiter
+        self.output_dir = output_dir
+        self.output_sym = output_sym
+        self.run_pipeline = run_pipeline
+        self.run_hadoop = run_hadoop
+        self.max_cpu_vcores = max_cpu_vcores
+        self.hdfs_replication = hdfs_replication
+        self.over_slurm = over_slurm
+        self.hdfs_copy_delay = hdfs_copy_delay
+        self.fft_at_mapper = fft_at_mapper
+        self.ini_folder = ini_folder
+        self.ini_stations = ini_stations
+        self.ini_sources = ini_sources
+        self.ini_delay_model = ini_delay_model
+        self.ini_delays = ini_delays
+        self.ini_media = ini_media
+        self.ini_correlation = ini_correlation
+        self.internal_log_mapper = internal_log_mapper
+        self.internal_log_reducer = internal_log_reducer
+        self.adjust_mappers = adjust_mappers
+        self.adjust_reducers = adjust_reducers
+        self.ffts_per_chunk = ffts_per_chunk
+        self.text_mode = text_mode
+        self.use_nohash_partitioner = use_nohash_partitioner
+        self.use_lustre_plugin = use_lustre_plugin
+        self.lustre_user_dir = lustre_user_dir
+        self.lustra_prefix = lustra_prefix
+        self.one_baseline_per_task = one_baseline_per_task
+        self.min_mapper_chunk = min_mapper_chunk
+        self.max_mapper_chunk = max_mapper_chunk
+        self.task_scaling_stations = task_scaling_stations
+        self.sort_output = sort_output
+        self.bm_avoid_copy = bm_avoid_copy
+        self.bm_delete_output = bm_delete_output
+        self.timeout_stop = timeout_stop
+        self.single_precision = single_precision
+        self.profile_map = profile_map
+        self.profile_red = profile_red
+

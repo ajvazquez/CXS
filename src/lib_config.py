@@ -155,7 +155,7 @@ def get_config_mod_for_this_master(config_file,config_suffix,master_node,script_
     return(new_config_file)
 
 
-def get_configuration(file_log,config_file,timestamp_str,v=0):
+def get_configuration(file_log, config_file, timestamp_str, v=0, return_conf_obj=False):
     """
     Read parameters from configuration file "configh.conf".
     
@@ -490,7 +490,80 @@ def get_configuration(file_log,config_file,timestamp_str,v=0):
             print(" ---> VBox - Configured for running on VBox",file=file_log)
     
         print(" Temp dir overriden (default: /tmp)",file=file_log)
-    
+
+    if return_conf_obj:
+
+        config = ConfigGen(
+            mapper=MAPPER,
+            reducer=REDUCER,
+            dependencies=DEPENDENCIES,
+            packets_per_hdfs_block=PACKETS_PER_HDFS_BLOCK,
+            checksum_size=CHECKSUM_SIZE,
+            src_dir=SRC_DIR,
+            app_dir=APP_DIR,
+            conf_dir=CONF_DIR,
+            templates_conf_dir=TEMPLATES_CONF_DIR,
+            templates_env_dir=TEMPLATES_ENV_DIR,
+            hadoop_dir=HADOOP_DIR,
+            hadoop_conf_dir=HADOOP_CONF_DIR,
+            nodes=NODES,
+            mappersh=MAPPERSH,
+            reducersh=REDUCERSH,
+            jobsh=JOBSH,
+            python_x=PYTHON_X,
+            username_machines=USERNAME_MACHINES,
+            max_slaves=MAX_SLAVES,
+            slaves=SLAVES,
+            masters=MASTERS,
+            master_is_slave=MASTER_IS_SLAVE,
+            hadoop_temp_dir=HADOOP_TEMP_DIR,
+            data_dir=DATA_DIR,
+            data_dir_tmp=DATA_DIR_TMP,
+            hdfs_data_dir=HDFS_DATA_DIR,
+            hadoop_start_delay=HADOOP_START_DELAY,
+            hadoop_stop_delay=HADOOP_STOP_DELAY,
+            prefix_output=PREFIX_OUTPUT,
+            hadoop_text_delimiter=HADOOP_TEXT_DELIMITER,
+            output_dir=OUTPUT_DIR,
+            output_sym=OUTPUT_SYM,
+            run_pipeline=RUN_PIPELINE,
+            run_hadoop=RUN_HADOOP,
+            max_cpu_vcores=MAX_CPU_VCORES,
+            hdfs_replication=HDFS_REPLICATION,
+            over_slurm=OVER_SLURM,
+            hdfs_copy_delay=HDFS_COPY_DELAY,
+            fft_at_mapper=FFT_AT_MAPPER,
+            ini_folder=INI_FOLDER,
+            ini_stations=INI_STATIONS,
+            ini_sources=INI_SOURCES,
+            ini_delay_model=INI_DELAY_MODEL,
+            ini_delays=INI_DELAYS,
+            ini_media=INI_MEDIA,
+            ini_correlation=INI_CORRELATION,
+            internal_log_mapper=INTERNAL_LOG_MAPPER,
+            internal_log_reducer=INTERNAL_LOG_REDUCER,
+            adjust_mappers=ADJUST_MAPPERS,
+            adjust_reducers=ADJUST_REDUCERS,
+            ffts_per_chunk=FFTS_PER_CHUNK,
+            text_mode=TEXT_MODE,
+            use_nohash_partitioner=USE_NOHASH_PARTITIONER,
+            use_lustre_plugin=USE_LUSTRE_PLUGIN,
+            lustre_user_dir=LUSTRE_USER_DIR,
+            lustra_prefix=LUSTRE_PREFIX,
+            one_baseline_per_task=ONE_BASELINE_PER_TASK,
+            min_mapper_chunk=MIN_MAPPER_CHUNK,
+            max_mapper_chunk=MAX_MAPPER_CHUNK,
+            task_scaling_stations=TASK_SCALING_STATIONS,
+            sort_output=SORT_OUTPUT,
+            bm_avoid_copy=BM_AVOID_COPY,
+            bm_delete_output=BM_DELETE_OUTPUT,
+            timeout_stop=TIMEOUT_STOP,
+            single_precision=SINGLE_PRECISION,
+            profile_map=PROFILE_MAP,
+            profile_red=PROFILE_RED
+        )
+        return config
+
     return([MAPPER, REDUCER, DEPENDENCIES, PACKETS_PER_HDFS_BLOCK,CHECKSUM_SIZE,\
             SRC_DIR,APP_DIR, CONF_DIR, TEMPLATES_CONF_DIR, TEMPLATES_ENV_DIR, HADOOP_DIR,HADOOP_CONF_DIR,NODES,
             MAPPERSH,REDUCERSH,JOBSH,PYTHON_X,\

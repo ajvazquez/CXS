@@ -100,7 +100,7 @@ def process_ini_correlation(params_array_corr,file_log,v=1):
     
     if v==1:
         print(" Processing (correlation).ini file",file=file_log) 
-        
+
     stations = int(get_param_serial(params_array_corr,C_INI_CR_S_ELEMENTS,C_INI_CR_STATIONS))
     fft_size = int(get_param_serial(params_array_corr,C_INI_CR_S_COMP,C_INI_CR_FFT))
     accumulation_time = get_param_serial(params_array_corr,C_INI_CR_S_COMP,C_INI_CR_ACC)
@@ -315,7 +315,7 @@ def get_num_partitions_red(one_baseline_per_task,accumulation_time,signal_durati
 
 
 def process_ini_files(data_dir, ini_stations, ini_sources, ini_delay_model, ini_delays, ini_media, ini_correlation,\
-                      one_baseline_per_task,v=1,file_log=sys.stdout):
+                      one_baseline_per_task, v=1, file_log=sys.stdout, return_config_obj=False):
     """
     Process .ini files.
     
@@ -521,10 +521,40 @@ def process_ini_files(data_dir, ini_stations, ini_sources, ini_delay_model, ini_
         codecs_serial = "0"
     else:
         codecs_serial = get_group_of_serialized_codebooks_noencoding(v_stations,v_id_stations,v_codecs,v_bits_sample)
-    
-    
 
-    
+
+    if return_config_obj:
+        config = ConfigIni(
+            stations_serial_str=stations_serial_str,
+            media_serial_str=media_serial_str,
+            correlation_serial_str=correlation_serial_str,
+            delays_serial_str=delays_serial_str,
+            auto_stations=auto_stations,
+            auto_pols=auto_pols,
+            fft_size=fft_size,
+            accumulation_time=accumulation_time,
+            stations= stations,
+            ref_epoch=ref_epoch,
+            signal_start=signal_start,
+            signal_duration=signal_duration,
+            input_files=input_files,
+            first_frame_num=first_frame_num,
+            num_frames=num_frames,
+            codecs_serial=codecs_serial,
+            max_packet_size=max_packet_size,
+            total_frames=total_frames,
+            total_partitions=total_partitions,
+            windowing=windowing,
+            phase_calibration=phase_calibration,
+            delay_error=delay_error,
+            error_str_v=error_str_v,
+            num_pols=num_pols,
+        )
+        return config
+
+
+
+
     return([stations_serial_str,media_serial_str,correlation_serial_str,delays_serial_str,\
             auto_stations, auto_pols, fft_size, accumulation_time, stations, ref_epoch, signal_start, signal_duration,input_files,\
             first_frame_num,num_frames,codecs_serial,max_packet_size,total_frames,total_partitions,windowing,\

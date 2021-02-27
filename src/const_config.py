@@ -124,6 +124,7 @@ C_CONF_HMASTERS_MASTER_IS_SLAVE ='Master is slave'
 
 
 C_CONF_OTHER =                  C_CONF_PREH+C_CONF_SUF_OTHER
+C_CONF_MISC = "Misc"
 C_CONF_OTHER_START_DELAY =      'Start time delay [s]'
 C_CONF_OTHER_STOP_DELAY =       'Stop time delay [s]'
 C_CONF_OTHER_COPY_DELAY =       'Copy files delay [s]'
@@ -359,4 +360,45 @@ class ConfigGen(object):
         self.single_precision = single_precision
         self.profile_map = profile_map
         self.profile_red = profile_red
+
+
+class ConfigCXS(object):
+
+    def __init__(self,
+                 fft_at_mapper,
+                 data_dir,
+                 ini_folder,
+                 ini_stations,
+                 ini_sources,
+                 ini_delay_model,
+                 ini_delays,
+                 ini_media,
+                 ini_correlation,
+                 internal_log_mapper,
+                 internal_log_reducer,
+                 ffts_per_chunk,
+                 one_baseline_per_task,
+                 min_mapper_chunk,
+                 max_mapper_chunk,
+                 task_scaling_stations,
+                 single_precision,
+                 ):
+
+        self.fft_at_mapper = fft_at_mapper
+        self.data_dir = data_dir
+        self.ini_folder = ini_folder
+        self.ini_stations = ini_stations
+        self.ini_sources = ini_sources
+        self.ini_delay_model = ini_delay_model
+        self.ini_delays = ini_delays
+        self.ini_media = ini_media
+        self.ini_correlation = ini_correlation
+        self.internal_log_mapper = internal_log_mapper
+        self.internal_log_reducer = internal_log_reducer
+        self.ffts_per_chunk = ffts_per_chunk
+        self.one_baseline_per_task = one_baseline_per_task
+        self.min_mapper_chunk = min_mapper_chunk
+        self.max_mapper_chunk = max_mapper_chunk
+        self.task_scaling_stations = task_scaling_stations
+        self.single_precision = single_precision
 

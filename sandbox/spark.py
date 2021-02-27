@@ -28,7 +28,7 @@ x = sc.binaryFiles("file:///home/aj/work/cx_git/CorrelX/examples/test_dataset_vg
 
 import cx38
 import io
-w = cx38.CXworker(config_file="/home/aj/work/cx_git/CorrelX/conf/correlx.ini")
+w = cx38.CXworker(config_file="/home/aj/work/cx_git/CorrelX/conf/cxs338.ini")
 
 def process_file(rdd):
     f_name = rdd[0].split("/")[-1]

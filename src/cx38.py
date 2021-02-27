@@ -1,5 +1,7 @@
 import time
-from lib_config import get_configuration
+# legacy
+#from lib_config import get_configuration
+from lib_config_simple import get_configuration
 from lib_ini_exper import process_ini_files
 from msvf import fun_mapper
 from rsvf import fun_reducer
@@ -8,16 +10,15 @@ from const_mapred import KEY_SEP
 
 class CXworker(object):
 
-    def __init__(self, config_file="correlx.ini"):
+    def __init__(self, config_file="cxs338.ini"):
         self.config_gen, self.config_ini = self.read_config(config_file=config_file)
 
     def read_config(self, config_file):
         v = 0
-        timestamp_str = time.strftime("%Y%m%d_%H%M%S")
+        #timestamp_str = time.strftime("%Y%m%d_%H%M%S")
         file_log = None
 
-        config_gen = get_configuration(v=v, config_file=config_file, timestamp_str=timestamp_str, file_log=file_log,
-                                       return_conf_obj=True)
+        config_gen = get_configuration(v=v, config_file=config_file, file_log=file_log)
         config_ini = process_ini_files(config_gen.data_dir,
                                        config_gen.ini_stations,
                                        config_gen.ini_sources,

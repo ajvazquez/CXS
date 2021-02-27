@@ -1,6 +1,10 @@
-examples/test_dataset_vgos/cx_202*
-conf/correlx.ini_mod_*
 **.pyc
-conf/ajx
+conf/*
+!conf/correlx.ini
 examples/test_dataset_vgos/delays.ini*
+examples/test_dataset_vgos/cx_202*
 output/
+app/*
+!app/info.txt
+templates/*
+!templates/info.txt

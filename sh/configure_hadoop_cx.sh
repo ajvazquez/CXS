@@ -73,6 +73,20 @@ fi
 echo "Using Hadoop dir: "$HDIR
 echo ""
 
+# Python binary
+PFILE=`find ~ -path "$CDIR*bin/python"|head -n1`
+echo ""
+echo "Python binary found:" $PFILE
+echo "(Please make sure the required dependencies are installed in this environment)"
+echo "Enter to confirm, new path to override: [Enter]"
+read TIN
+if [ -n "$TIN" ]; then
+ PFILE=$TIN
+fi
+echo "Using Python binary: "$PFILE
+echo ""
+
+
 # Java folder
 JDIR=`dirname $(dirname $(readlink -f $(which javac)))`
 echo ""
@@ -128,5 +142,9 @@ cp $HDIR/etc/hadoop/* $CDIR/templates/hadoop_config_files/
 echo "Updating Hadoop path in CorrelX configuration..."
 HLINE="Hadoop directory:               "$HDIR
 sed -i "s|Hadoop directory:.*|$HLINE|" $CDIR/conf/correlx.ini
+
+echo "Updating Python binary path in CorrelX configuration..."
+PLINE="Python executable:               "$PFILE
+sed -i "s|Python executable:.*|$PLINE|" $CDIR/conf/correlx.ini
 
 echo "Done"

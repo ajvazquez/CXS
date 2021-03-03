@@ -322,7 +322,8 @@ if __name__ == '__main__':
     
             # Check errors in experiment .ini files
             init_success = check_errors_ini_exper(DATA_DIR,INI_FOLDER,INI_STATIONS,INI_SOURCES,INI_DELAY_MODEL,INI_MEDIA)
-    
+
+            pipeline_only = RUN_PIPELINE and not RUN_HADOOP
     
     
             if init_success==0:
@@ -359,7 +360,7 @@ if __name__ == '__main__':
                 #   .sh scripts with environment setup.
                 # Note that HADOOP_CONF_DIR should be a different folder for every deployment i.e. for every different master,
                 #   and thus name should depend on master name.
-                distribute_files(simply_copy_local=OVER_SLURM,file_group="Hadoop config files",v=v,exec_permission=0,file_log=FILE_LOG,\
+                distribute_files(simply_copy_local=pipeline_only or OVER_SLURM,file_group="Hadoop config files",v=v,exec_permission=0,file_log=FILE_LOG,\
                                  files=["*"],source_dir=TEMPLATES_ENV_DIR,conf_dir=CONF_DIR,\
                                  destination_dir=HADOOP_CONF_DIR,nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,\
                                  force_node=','.join(NODES_LIST))
@@ -484,7 +485,7 @@ if __name__ == '__main__':
                                      files=files,source_dir=CONF_DIR,conf_dir=CONF_DIR,destination_dir=HADOOP_CONF_DIR,\
                                      nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,force_node=','.join(NODES_LIST))
                         # Other nodes
-                        distribute_files(simply_copy_local=OVER_SLURM,file_group="Conf",v=v,exec_permission=0,file_log=FILE_LOG,\
+                        distribute_files(simply_copy_local=pipeline_only or OVER_SLURM,file_group="Conf",v=v,exec_permission=0,file_log=FILE_LOG,\
                                      files=files,source_dir=CONF_DIR,conf_dir=CONF_DIR,destination_dir=HADOOP_CONF_DIR,\
                                      nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,force_node=','.join(NODES_LIST))
             
@@ -541,12 +542,12 @@ if __name__ == '__main__':
                         files = DEPENDENCIES
                         files.extend([MAPPER])
                         files.extend([REDUCER])
-                        distribute_files(simply_copy_local=OVER_SLURM,file_group="App",v=v,exec_permission=1,file_log=FILE_LOG,\
+                        distribute_files(simply_copy_local=pipeline_only or OVER_SLURM,file_group="App",v=v,exec_permission=1,file_log=FILE_LOG,\
                                      files=files,source_dir=SRC_DIR,conf_dir=CONF_DIR,\
                                      destination_dir=APP_DIR,nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,\
                                      force_node=','.join(NODES_LIST))
                         files_sh = [MAPPERSH, REDUCERSH]
-                        distribute_files(simply_copy_local=OVER_SLURM,file_group="App-sh",v=v,exec_permission=1,file_log=FILE_LOG,\
+                        distribute_files(simply_copy_local=pipeline_only or OVER_SLURM,file_group="App-sh",v=v,exec_permission=1,file_log=FILE_LOG,\
                                      files=files_sh,source_dir=CONF_DIR,conf_dir=CONF_DIR,\
                                      destination_dir=APP_DIR,nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,\
                                      force_node=','.join(NODES_LIST))
@@ -601,7 +602,7 @@ if __name__ == '__main__':
                                  destination_dir=HADOOP_CONF_DIR,nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,\
                                  force_node=','.join(NODES_LIST))
                             # Other nodes
-                            distribute_files(simply_copy_local=OVER_SLURM,file_group="Replication",v=v,exec_permission=0,file_log=FILE_LOG,files=files,source_dir=CONF_DIR,conf_dir=CONF_DIR,\
+                            distribute_files(simply_copy_local=pipeline_only or OVER_SLURM,file_group="Replication",v=v,exec_permission=0,file_log=FILE_LOG,files=files,source_dir=CONF_DIR,conf_dir=CONF_DIR,\
                                  destination_dir=HADOOP_CONF_DIR,nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,\
                                  force_node=','.join(NODES_LIST))
                 

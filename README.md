@@ -63,8 +63,8 @@ bash sh/run_example_vgos_spark.sh
 The following times are for the previous examples running on a single host with minimal configuration.
 ```
                     real    reported   notes
-CXPL27 (pipeline)    15 s    7 s
-CXPL38 (pipeline)    16 s    8 s
+CXPL27 (pipeline)     8 s    7 s
+CXPL38 (pipeline)     8 s    8 s
 CXH227 (hadoop)     247 s   64 s       (24.6 hdfs in, 2.6 hdfs out, 36.6 hadoop-1s-8v)
 CXS338 (spark)       16 s   16 s
 ```

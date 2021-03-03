@@ -114,6 +114,25 @@ def get_configuration(file_log, config_file, v=0):
     INI_CORRELATION = INI_FOLDER + "/" + config.get(   C_CONF_EXP, C_CONF_EXP_CORRELATION)
     DATA_DIR = INI_FOLDER + "/" +        config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SUB) + "/"
 
+    if not os.path.isdir(INI_FOLDER):
+        raise Exception("Cannot find experiment folder: {}".format(INI_FOLDER))
+
+    FILES = [
+        INI_STATIONS,
+        INI_SOURCES,
+        #INI_DELAYS,
+        INI_DELAY_MODEL,
+        INI_MEDIA,
+        INI_CORRELATION,
+    ]
+
+    for x in FILES:
+        if not os.path.isfile(x):
+            raise Exception("Cannot find experiment configuration file: {}".format(INI_FOLDER))
+
+    if not os.path.isdir(DATA_DIR):
+        raise Exception("Cannot find experiment data dir: {}".format(DATA_DIR))
+
     config = ConfigCXS(
         fft_at_mapper=FFT_AT_MAPPER,
         data_dir=DATA_DIR,

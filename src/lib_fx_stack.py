@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 #The MIT CorrelX Correlator
 #
@@ -36,13 +31,29 @@ CorrelX FX correlation and samples-stack routines.
 
 from __future__ import print_function,division
 import scipy.fftpack as scfft
-import numpy as np 
+import numpy as np
+import os
 
-from const_mapred import *
-from lib_pcal import *
-from lib_delay_model import *
-from lib_debug import *
-from const_performance import *
+if os.environ.get("is_legacy"):
+    from const_mapred import *
+    from lib_pcal import *
+    from lib_delay_model import *
+    from lib_debug import *
+    from const_performance import *
+else:
+    from app.helpers.const_debug import DEBUG_HSTACK, DEBUG_LIB_DELAY, DEBUG_FRAC_OVER, DEBUG_GENERAL_R, DEBUG_DELAYS
+    from app.helpers.lib_debug import print_debug_r_hstack, print_debug_r_hstack_arrow, print_debug_r_hstack_separator,\
+        print_debug_r_delays_d, print_debug_r_delays_f
+    from app.base.const_mapred import KEY_SEP
+
+    from config.const_ini_files import C_INI_CR_WINDOW_HANNING
+
+    from computation.base.const_performance import USE_FFTW, THREADS_FFTW, USE_NE, USE_MP, THREADS_NE, USE_NE_EXP, \
+        USE_NE_FRINGE, FULL_TIMESCALE, SAVE_TIME_ROTATIONS, MP_THREADS
+
+    from computation.delay.lib_delay_model import DIFF_POLY, get_delay_val, get_full_frac_val
+
+    from computation.pcal.lib_pcal import accumulate_pcal_all
 
 
 if USE_FFTW:
@@ -59,8 +70,8 @@ if USE_NE:
 # multiprocessing
 if USE_MP:
     import multiprocessing
-    
-    
+
+
 
     
 ###########################################

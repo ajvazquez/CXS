@@ -1,2 +1,2 @@
 #!/bin/bash
-python sandbox/spark.py
+python cxs/parallel/spark/spark.py

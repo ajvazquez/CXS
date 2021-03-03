@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 #The MIT CorrelX Correlator
 #

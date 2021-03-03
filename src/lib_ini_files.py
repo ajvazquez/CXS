@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 #The MIT CorrelX Correlator
 #
@@ -35,7 +30,7 @@ Notes
 
 | Experiment files:
 | Every experiment requires the following files:
-|    correation.ini:             configuration of the correlation (start and end time, FFT length, etc.)
+|    correlation.ini:             configuration of the correlation (start and end time, FFT length, etc.)
 |    stations.ini:               information about stations clocks (polynomials).
 |    sources.ini:                information about sources.
 |    media.ini:                  information about media (input file names, formats, etc)
@@ -58,11 +53,13 @@ Regarding initialization files
 
 from __future__ import print_function
 
-import sys
-import os
 import numpy as np
+import os
 
-from const_ini_files import *
+if os.environ.get("is_legacy"):
+    from const_ini_files import *
+else:
+    from config.const_ini_files import *
 
 
 try:

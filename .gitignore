@@ -1,6 +1,7 @@
 **.pyc
 conf/*
 !conf/correlx.ini
+!conf/cxs338.ini
 examples/test_dataset_vgos/delays.ini*
 examples/test_dataset_vgos/cx_202*
 output/

@@ -2,21 +2,22 @@
 """
 # Add this to env activate
 export SPARK_HOME=/home/aj/work/tfm/spark-3.0.1-bin-hadoop2.7
-
-export PYTHONPATH=$PYTHONPATH:`pwd`/src
+export PYTHONPATH=$PYTHONPATH:`pwd`/cxs
 """
+import io
 import time
+import findspark
+from pyspark.sql import SparkSession
+from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
+from app import cx38
+
 start_time = time.time()
 
 
 # find spark
-import findspark
 findspark.init()
 
 # spark context
-from pyspark.sql import SparkSession
-
-#.config("spark.some.config.option", "some-value") \
 spark = SparkSession \
     .builder \
     .appName("test app") \
@@ -26,8 +27,6 @@ sc = spark.sparkContext
 # testbytesio
 x = sc.binaryFiles("file:///home/aj/work/cx_git/CorrelX/examples/test_dataset_vgos/media/*.vdif")
 
-import cx38
-import io
 w = cx38.CXworker(config_file="/home/aj/work/cx_git/CorrelX/conf/cxs338.ini")
 
 def process_file(rdd):
@@ -42,7 +41,6 @@ def reduce_lines(rdd):
 
 x3 = x.flatMap(lambda rdd:process_file(rdd))
 
-from const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
 def get_sort_vector(x):
     def to_int(y):
         if y.isnumeric():

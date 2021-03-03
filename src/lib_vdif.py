@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 #The MIT CorrelX Correlator
 #
@@ -80,7 +75,7 @@ ENDIAN_BITARRAY = 'big'                          # Bitarray endian.
 
 # Low level configuration for bitarray implementation (used in frame writer)
 #  Use 'L' (min size 4 bytes) or 'I' (min size 2 bytes) for integer
-#  https://docs.python.org/2/library/array.html
+#!/usr/bin/python.org/2/library/array.html
 #  With 'L' it works in Python3, but in Python2 the words seem to be extended to 64 bytes, padded with zeros.
 #  'I' seems to works well in both Python2 and Python3
 #LOW_LEVEL_WORD='L'

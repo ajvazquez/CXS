@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 #The MIT CorrelX Correlator
 #
@@ -89,14 +84,14 @@ FULL_TIMESCALE=1  # Evaluate delays for the full timescale
 ###########################################################
 
 # PyFFTW 
-#   (https://pypi.python.org/pypi/pyFFTW)
+#!/usr/bin/python.org/pypi/pyFFTW)
 #   Using scipy fft by default.
 #   TO DO: This is under development.
 USE_FFTW =     0
 THREADS_FFTW = 1
 
 # Numexpr
-#   (https://pypi.python.org/pypi/numexpr)
+#!/usr/bin/python.org/pypi/numexpr)
 #   TO DO: This is under development.
 USE_NE =       0
 THREADS_NE =   1
@@ -112,7 +107,7 @@ else:
     USE_NE_F=      0
 
 # Python multiprocessing.Pool
-#   (https://docs.python.org/2/library/multiprocessing.html#using-a-pool-of-workers)
+#!/usr/bin/python.org/2/library/multiprocessing.html#using-a-pool-of-workers)
 #   Use multi-threading, currently for fringe rotation.
 #   TO DO: This is under development.
 USE_MP =      0

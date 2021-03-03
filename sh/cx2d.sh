@@ -52,11 +52,11 @@ echo $MEDIA
 if grep -q zoom_post "$MEDIA"; then
  echo "Zoom bands"
  cp ../*.ini .
- python $CX/process_zoom.py . $OUT_FILE ${OUT_FILE}_zoom $AVG
+ is_legacy=1 python $CX/process_zoom.py . $OUT_FILE ${OUT_FILE}_zoom $AVG
  echo "Convert format"
- python $CX/convert_cx2d.py . .. ${OUT_FILE}_zoom
+ is_legacy=1 python $CX/convert_cx2d.py . .. ${OUT_FILE}_zoom
 else
  echo "Convert format"
- python $CX/convert_cx2d.py . .. $OUT_FILE
+ is_legacy=1 python $CX/convert_cx2d.py . .. $OUT_FILE
 fi
 cd $CURRENT

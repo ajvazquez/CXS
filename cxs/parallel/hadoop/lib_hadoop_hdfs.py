@@ -40,9 +40,12 @@ import time
 import sys
 import numpy as np
 
-assert(os.environ.get("is_legacy"))
-from lib_vdif import get_vdif_stats
-from const_hadoop import *
+if os.environ.get("is_legacy"):
+    from lib_vdif import get_vdif_stats
+    from const_hadoop import *
+else:
+    from iocx.readers.vdif.lib_vdif import get_vdif_stats
+    from parallel.hadoop.const_hadoop import *
 
 
 

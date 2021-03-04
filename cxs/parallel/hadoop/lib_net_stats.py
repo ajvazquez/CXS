@@ -37,10 +37,6 @@ Routines for network statistics.
 from __future__ import print_function,division
 import sys
 import os
-assert(os.environ.get("is_legacy"))
-
-
-
 
 
 def print_network_stats(nodes_list,stats_params,stats_values=[],stats_ping=[],title_stats="",v=0,file_log=sys.stdout):

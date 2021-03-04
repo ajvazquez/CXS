@@ -39,11 +39,14 @@ import sys
 import time
 import os
 
-assert(os.environ.get("is_legacy"))
-# Constants for mapper and reducer
-from const_mapred import *
-from const_hadoop import *
-import lib_profiling
+if os.environ.get("is_legacy"):
+    from const_mapred import *
+    from const_hadoop import *
+    import lib_profiling
+else:
+    from app.base.const_mapred import *
+    from parallel.hadoop.const_hadoop import *
+    from app.helpers.lib_profiling import *
 
 
 

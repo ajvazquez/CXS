@@ -39,10 +39,13 @@ from __future__ import print_function
 import sys
 import os
 
-assert(os.environ.get("is_legacy"))
-from const_config import *
-from const_hadoop import *
 
+if os.environ.get("is_legacy"):
+    from const_config import *
+    from const_hadoop import *
+else:
+    from parallel.hadoop.const_config import *
+    from parallel.hadoop.const_hadoop import *
 
 try:
     import configparser
@@ -147,6 +150,8 @@ def get_config_mod_for_this_master(config_file,config_suffix,master_node,script_
     """
     new_config_file = config_file + config_suffix
     abs_local_path = os.path.dirname(os.path.abspath(script_arg_zero))
+    if not os.environ.get("is_legacy"):
+        abs_local_path += "/../../"
     abs_local_path = os.path.abspath(abs_local_path+C_CONF_RELATIVE_PATH_LOCALPATH)
 
     os.system("sed -e 's/"+C_CONF_RES_LOCALHOST+"/" + master_node + "/' " + config_file +" > " + new_config_file)
@@ -1019,7 +1024,6 @@ def get_conf_out_dirs(master_name,hadoop_dir,app_dir,conf_dir,suffix_conf,output
     if "/" in suffix_out:
         suffix_out=suffix_out.split('/')[-1]
 
-    
     conf_dir+=master_name + "/"                                        # Create conf dir for each node (still shared...)
     app_dir+=master_name + "/"                                         # Create app dir for each node (still shared...)
     hadoop_conf_dir = conf_dir + "etc_hadoop_" + suffix_conf +"/"      # Hadoop conf dir for this host

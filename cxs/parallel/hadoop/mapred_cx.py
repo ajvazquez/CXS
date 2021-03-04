@@ -66,21 +66,32 @@ import time
 import argparse
 import numpy as np
 
-from const_config import *
-from const_hadoop import *
-from lib_config import *
-from lib_ini_exper import *
-from lib_mapredcorr import *
-from lib_hadoop_hdfs import *
-from lib_net_stats import *
+if os.environ.get("is_legacy"):
+    from const_config import *
+    from const_hadoop import *
+    from lib_config import *
+    from lib_ini_exper import *
+    from lib_mapredcorr import *
+    from lib_hadoop_hdfs import *
+    from lib_net_stats import *
 
-# Vector quantization                           # VQ disabled
-#import lib_vq
-#imp.reload(lib_vq)
-#from lib_vq import *
-
-
-assert(os.environ.get("is_legacy"))
+    # Vector quantization                           # VQ disabled
+    #import lib_vq
+    #imp.reload(lib_vq)
+    #from lib_vq import *
+else:
+    from config.lib_ini_exper import check_errors_ini_exper, process_ini_files
+    #from parallel.hadoop.const_config import *
+    #from parallel.hadoop.const_hadoop import *
+    from parallel.hadoop.lib_config import get_log_file, is_this_node_master, get_config_mod_for_this_master, \
+        override_configuration_parameters, get_configuration, reduce_list_nodes, overwrite_nodes_file,\
+        get_conf_out_dirs, get_list_configuration_files
+    from parallel.hadoop.lib_mapredcorr import pipeline_app, get_mapper_params_str, get_mr_command, create_inter_sh, \
+        get_reducer_params_str, run_mapreduce_sh
+    from parallel.hadoop.lib_hadoop_hdfs import process_hadoop_config_files, distribute_files, nodes_to_slaves_masters,\
+        cluster_stop, cluster_start, copy_files_to_hdfs, process_hcfile
+    from parallel.hadoop.lib_net_stats import init_net_stats, get_network_stats, print_network_totals, \
+        compute_txrx_bytes
 
 
 def print_execution_times(exec_times,io_times,bypass_print=0,v=1,file_log=sys.stdout):
@@ -324,7 +335,7 @@ if __name__ == '__main__':
             init_success = check_errors_ini_exper(DATA_DIR,INI_FOLDER,INI_STATIONS,INI_SOURCES,INI_DELAY_MODEL,INI_MEDIA)
 
             pipeline_only = RUN_PIPELINE and not RUN_HADOOP
-    
+
     
             if init_success==0:
                 print("Failed initialization, exiting!")
@@ -571,7 +582,7 @@ if __name__ == '__main__':
                         if v==1:    
                             with open(TEMP_LOG, 'r') as f_log:
                                 for line in f_log:
-                                    print(" "+line.strip(),file=file_log)
+                                    print(" "+line.strip(),file=FILE_LOG)
                         
                     
                         # Iterate on number of slaves

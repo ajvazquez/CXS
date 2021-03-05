@@ -371,10 +371,11 @@ if __name__ == '__main__':
                 #   .sh scripts with environment setup.
                 # Note that HADOOP_CONF_DIR should be a different folder for every deployment i.e. for every different master,
                 #   and thus name should depend on master name.
-                distribute_files(simply_copy_local=pipeline_only or OVER_SLURM,file_group="Hadoop config files",v=v,exec_permission=0,file_log=FILE_LOG,\
-                                 files=["*"],source_dir=TEMPLATES_ENV_DIR,conf_dir=CONF_DIR,\
-                                 destination_dir=HADOOP_CONF_DIR,nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,\
-                                 force_node=','.join(NODES_LIST))
+                if not pipeline_only:
+                    distribute_files(simply_copy_local=OVER_SLURM,file_group="Hadoop config files",v=v,exec_permission=0,file_log=FILE_LOG,\
+                                     files=["*"],source_dir=TEMPLATES_ENV_DIR,conf_dir=CONF_DIR,\
+                                     destination_dir=HADOOP_CONF_DIR,nodes=NODES,username=USERNAME_MACHINES,temp_log=TEMP_LOG,\
+                                     force_node=','.join(NODES_LIST))
             
             
                 

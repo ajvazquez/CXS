@@ -5,7 +5,9 @@ export SPARK_HOME=/home/aj/work/tfm/spark-3.0.1-bin-hadoop2.7
 export PYTHONPATH=$PYTHONPATH:`pwd`/cxs
 """
 import io
+import os
 import time
+from pathlib import Path
 import findspark
 from pyspark.sql import SparkSession
 from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
@@ -13,6 +15,11 @@ from app import cx38
 
 start_time = time.time()
 
+OUT_DIR = "s" + time.strftime("%Y%m%d_%H%M%S")
+OUT_DIR = "/home/aj/work/cx_git/CorrelX/output/{}".format(OUT_DIR)
+OUT_FILE = OUT_DIR+"/OUT_s0_v0.out"
+
+os.mkdir(OUT_DIR)
 
 # find spark
 findspark.init()
@@ -61,11 +68,14 @@ x_group = x3.reduceByKey(lambda x, y: x+y)
 x_group = x_group.map(fun_sort)
 x4 = x_group.flatMap(lambda rdd:reduce_lines(rdd))
 
-with open("test_out.txt","w") as f_out:
+with open(OUT_FILE, "w") as f_out:
     for x in x4.collect():
         print(x, file=f_out)
 
 sc.stop()
+
+# Touch for test to detect last file
+Path(OUT_FILE).touch()
 
 end_time = time.time()
 print("Elapsed: {}".format(end_time-start_time))

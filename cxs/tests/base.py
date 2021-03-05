@@ -13,8 +13,12 @@ PY3 = sys.version_info[0] == 3
 RECENT_FILE_S = 1.0
 
 THIS_PATH = os.path.dirname(os.path.realpath(__file__))
+
 PATH_EXAMPLE_LEGACY = os.path.abspath(THIS_PATH+"/../../examples/run_example_vgos.sh")
+PATH_EXAMPLE_LEGACY_SRC = os.path.abspath(THIS_PATH+"/../../examples/run_example_vgos_legacy.sh")
 PATH_EXAMPLE_NUMERIC = os.path.abspath(THIS_PATH+"/../../examples/run_example_vgos_num.sh")
+PATH_EXAMPLE_SPARK = os.path.abspath(THIS_PATH+"/../../examples/run_example_vgos_spark.sh")
+
 PATH_BASE = os.path.abspath(THIS_PATH+"/../../")
 PATH_OUT = THIS_PATH+"/../../output"
 PATH_SRC = THIS_PATH+"/../../src"
@@ -57,6 +61,13 @@ class BaseTest(unittest.TestCase):
         if not cls().VERBOSE:
             cls()._enable_output()
 
+    def count_output_files(self):
+        count = 0
+        for dirname, subdirs, files in os.walk(PATH_OUT):
+            for fname in files:
+                count += 1
+        return count
+
     def _find_last_output(self):
 
         def _file_is_recent(file, seconds=RECENT_FILE_S):
@@ -82,13 +93,10 @@ class BaseTest(unittest.TestCase):
             raise Exception("File {} is too old, probably not from the last execution".format(found))
         return os.path.abspath(found)
 
-    def run_pipeline_example(self, is_legacy=False):
+    def run_example(self, script):
         cmd = ""
         cmd += "cd {}; ".format(PATH_BASE)
-        if is_legacy:
-            cmd += "bash {}; ".format(PATH_EXAMPLE_LEGACY)
-        else:
-            cmd += "bash {}; ".format(PATH_EXAMPLE_NUMERIC)
+        cmd += "bash {}; ".format(script)
         cmd += "cd {}".format(THIS_PATH)
         process = subprocess.Popen(cmd,
                                    stdout=subprocess.PIPE,
@@ -105,8 +113,24 @@ class BaseTest(unittest.TestCase):
                 print(stderr)
         return self._find_last_output()
 
+    def run_pipeline_example(self, is_legacy=False, old_src=False):
+        if is_legacy:
+            if old_src:
+                script = PATH_EXAMPLE_LEGACY_SRC
+            else:
+                script = PATH_EXAMPLE_LEGACY
+        else:
+            script = PATH_EXAMPLE_NUMERIC
+        return self.run_example(script=script)
+
     def run_pipeline_legacy_example(self):
         return self.run_pipeline_example(is_legacy=True)
+
+    def run_pipeline_legacy_src_example(self):
+        return self.run_pipeline_example(is_legacy=True, old_src=True)
+
+    def run_spark_example(self):
+        return self.run_example(script=PATH_EXAMPLE_SPARK)
 
     def compare_results(self, file_a, file_b):
         return get_error_indicator(file_a, file_b, force=False, path_src=PATH_SRC)

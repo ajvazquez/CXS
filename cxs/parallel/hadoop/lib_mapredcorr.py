@@ -46,7 +46,7 @@ if os.environ.get("is_legacy"):
 else:
     from app.base.const_mapred import *
     from parallel.hadoop.const_hadoop import *
-    from app.helpers.lib_profiling import *
+    from app.helpers import lib_profiling
 
 
 

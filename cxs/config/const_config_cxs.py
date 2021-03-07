@@ -15,8 +15,15 @@ C_CONF_EXP_DELAYS =             'Delays file'
 C_CONF_EXP_DELAY_MODEL =        'Delay model file'
 C_CONF_EXP_MEDIA =              'Media file'
 C_CONF_EXP_CORRELATION =        'Correlation file'
-C_CONF_EXP_MEDIA_SUB =          'Media sub-folder'
+#C_CONF_EXP_MEDIA_SUB =          'Media sub-folder'
+C_CONF_EXP_MEDIA_SPARK =        'Spark input files'
 C_CONF_EXP_MEDIA_SUB_PREFIX =   'Output sub-folder prefix'
+
+
+C_CONF_FILES =                  "Files"
+C_CONF_FILES_OUT_DIR =          'Output directory'
+C_CONF_FILES_PREFIX_OUTPUT =    'Prefix for output'
+
 
 
 class ConfigCXS(object):
@@ -39,6 +46,8 @@ class ConfigCXS(object):
                  max_mapper_chunk,
                  task_scaling_stations,
                  single_precision,
+                 out_dir,
+                 out_prefix
                  ):
 
         self.fft_at_mapper = fft_at_mapper
@@ -58,3 +67,5 @@ class ConfigCXS(object):
         self.max_mapper_chunk = max_mapper_chunk
         self.task_scaling_stations = task_scaling_stations
         self.single_precision = single_precision
+        self.out_dir = out_dir
+        self.out_prefix = out_prefix

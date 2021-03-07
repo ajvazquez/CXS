@@ -1,2 +1,2 @@
 #!/bin/bash
-python cxs/parallel/spark/spark.py
+python cxs/parallel/spark/spark_cx.py

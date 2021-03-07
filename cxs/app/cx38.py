@@ -1,4 +1,5 @@
 import time
+import os
 # legacy
 #from lib_config import get_configuration
 from config.lib_config_cxs import get_configuration
@@ -30,6 +31,12 @@ class CXworker(object):
                                        return_config_obj=True,
                                        v=v)
         return [config_gen, config_ini]
+
+    def init_out(self):
+        out_sub_dir = "s" + time.strftime("%Y%m%d_%H%M%S")
+        out_dir = self.config_gen.out_dir+out_sub_dir
+        os.mkdir(out_dir)
+        self.out_file = out_dir + "/{}_s0_v0.out".format(self.config_gen.out_prefix)
 
     def mapper(self, f_input, f_name):
         return fun_mapper(self.config_gen, self.config_ini, f_input, f_name)

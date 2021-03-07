@@ -94,9 +94,18 @@ def get_configuration(file_log, config_file, v=0):
         print("\nReading configuration file...",file=file_log)    
 
     # Misc (Hadoop-other in legacy)
-    FFT_AT_MAPPER =          config.getboolean( C_CONF_MISC, C_CONF_OTHER_FFT_MAP)
-    ONE_BASELINE_PER_TASK =  config.getboolean( C_CONF_MISC, C_CONF_OTHER_ONE_BASELINE)
-    TASK_SCALING_STATIONS =  config.getboolean( C_CONF_MISC, C_CONF_OTHER_SCALING_STATIONS)
+    # FFT at mapper:              no
+    #FFT_AT_MAPPER =          config.getboolean( C_CONF_MISC, C_CONF_OTHER_FFT_MAP)
+    FFT_AT_MAPPER = False
+
+    #Task scaling stations: no
+    #TASK_SCALING_STATIONS =  config.getboolean( C_CONF_MISC, C_CONF_OTHER_SCALING_STATIONS)
+    TASK_SCALING_STATIONS = False
+
+    #One baseline per task: yes
+    #ONE_BASELINE_PER_TASK =  config.getboolean( C_CONF_MISC, C_CONF_OTHER_ONE_BASELINE)
+    ONE_BASELINE_PER_TASK = False
+
     SINGLE_PRECISION =       config.getboolean( C_CONF_MISC, C_CONF_OTHER_SINGLE_PRECISION)
     FFTS_PER_CHUNK =         -1                                                                # TO DO: remove
     MIN_MAPPER_CHUNK =       -1                                                                # TO DO: remove
@@ -112,7 +121,15 @@ def get_configuration(file_log, config_file, v=0):
     INI_DELAY_MODEL = INI_FOLDER + "/" + config.get(   C_CONF_EXP, C_CONF_EXP_DELAY_MODEL)
     INI_MEDIA = INI_FOLDER + "/" +       config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA)
     INI_CORRELATION = INI_FOLDER + "/" + config.get(   C_CONF_EXP, C_CONF_EXP_CORRELATION)
-    DATA_DIR = INI_FOLDER + "/" +        config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SUB) + "/"
+    #DATA_DIR = INI_FOLDER + "/" +        config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SUB) + "/"
+    DATA_DIR =                           config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SPARK) + "/"
+    #DATA_DIR = None
+
+    # Files
+    OUTPUT_DIR =         config.get(       C_CONF_FILES, C_CONF_FILES_OUT_DIR)
+    if OUTPUT_DIR[-1]!="/":
+        OUTPUT_DIR+=("/")
+    PREFIX_OUTPUT =      config.get(       C_CONF_FILES, C_CONF_FILES_PREFIX_OUTPUT)
 
     if not os.path.isdir(INI_FOLDER):
         raise Exception("Cannot find experiment folder: {}".format(INI_FOLDER))
@@ -130,8 +147,8 @@ def get_configuration(file_log, config_file, v=0):
         if not os.path.isfile(x):
             raise Exception("Cannot find experiment configuration file: {}".format(INI_FOLDER))
 
-    if not os.path.isdir(DATA_DIR):
-        raise Exception("Cannot find experiment data dir: {}".format(DATA_DIR))
+    #if not os.path.isdir(DATA_DIR):
+    #    raise Exception("Cannot find experiment data dir: {}".format(DATA_DIR))
 
     config = ConfigCXS(
         fft_at_mapper=FFT_AT_MAPPER,
@@ -151,5 +168,7 @@ def get_configuration(file_log, config_file, v=0):
         max_mapper_chunk=MAX_MAPPER_CHUNK,
         task_scaling_stations=TASK_SCALING_STATIONS,
         single_precision=SINGLE_PRECISION,
+        out_dir=OUTPUT_DIR,
+        out_prefix=PREFIX_OUTPUT
     )
     return config

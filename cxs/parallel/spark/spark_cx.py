@@ -18,11 +18,10 @@ def run_spark_task(config_file):
     cxs.run(sc)
     cxs.stop_spark(sc)
 
-    Path(cxs.out_file).touch()
-
-
     end_time = time.time()
     print("Elapsed: {}".format(end_time-start_time))
+
+    Path(cxs.out_file).touch()
 
 
 def main():

@@ -2,6 +2,7 @@
 conf/*
 !conf/correlx.ini
 !conf/cxs338.ini
+!conf/cxs338_full.ini
 examples/test_dataset_vgos/delays.ini*
 examples/test_dataset_vgos/cx_202*
 output/

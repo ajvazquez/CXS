@@ -102,11 +102,11 @@ def get_configuration(file_log, config_file, v=0):
     #TASK_SCALING_STATIONS =  config.getboolean( C_CONF_MISC, C_CONF_OTHER_SCALING_STATIONS)
     TASK_SCALING_STATIONS = False
 
-    #One baseline per task: yes
+    #One baseline per task: no
     #ONE_BASELINE_PER_TASK =  config.getboolean( C_CONF_MISC, C_CONF_OTHER_ONE_BASELINE)
     ONE_BASELINE_PER_TASK = False
 
-    SINGLE_PRECISION =       config.getboolean( C_CONF_MISC, C_CONF_OTHER_SINGLE_PRECISION)
+    SINGLE_PRECISION =       config.getboolean( C_CONF_MISC, C_CONF_OTHER_SINGLE_PRECISION, fallback=False)
     FFTS_PER_CHUNK =         -1                                                                # TO DO: remove
     MIN_MAPPER_CHUNK =       -1                                                                # TO DO: remove
     MAX_MAPPER_CHUNK =       -1                                                                # TO DO: remove
@@ -115,12 +115,12 @@ def get_configuration(file_log, config_file, v=0):
     
     # Experiment
     INI_FOLDER =                         config.get(   C_CONF_EXP, C_CONF_EXP_FOLDER)
-    INI_STATIONS = INI_FOLDER + "/" +    config.get(   C_CONF_EXP, C_CONF_EXP_STATIONS)
-    INI_SOURCES = INI_FOLDER + "/" +     config.get(   C_CONF_EXP, C_CONF_EXP_SOURCES)
-    INI_DELAYS = INI_FOLDER + "/" +      config.get(   C_CONF_EXP, C_CONF_EXP_DELAYS)
-    INI_DELAY_MODEL = INI_FOLDER + "/" + config.get(   C_CONF_EXP, C_CONF_EXP_DELAY_MODEL)
-    INI_MEDIA = INI_FOLDER + "/" +       config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA)
-    INI_CORRELATION = INI_FOLDER + "/" + config.get(   C_CONF_EXP, C_CONF_EXP_CORRELATION)
+    INI_STATIONS = INI_FOLDER + "/" +    config.get(   C_CONF_EXP, C_CONF_EXP_STATIONS, fallback="stations.ini")
+    INI_SOURCES = INI_FOLDER + "/" +     config.get(   C_CONF_EXP, C_CONF_EXP_SOURCES, fallback="sources.ini")
+    INI_DELAYS = INI_FOLDER + "/" +      config.get(   C_CONF_EXP, C_CONF_EXP_DELAYS, fallback="delays.ini")
+    INI_DELAY_MODEL = INI_FOLDER + "/" + config.get(   C_CONF_EXP, C_CONF_EXP_DELAY_MODEL, fallback="delay_model.ini")
+    INI_MEDIA = INI_FOLDER + "/" +       config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA, fallback="media.ini")
+    INI_CORRELATION = INI_FOLDER + "/" + config.get(   C_CONF_EXP, C_CONF_EXP_CORRELATION, fallback="correlation.ini")
     #DATA_DIR = INI_FOLDER + "/" +        config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SUB) + "/"
     DATA_DIR =                           config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SPARK) + "/"
     #DATA_DIR = None
@@ -129,7 +129,7 @@ def get_configuration(file_log, config_file, v=0):
     OUTPUT_DIR =         config.get(       C_CONF_FILES, C_CONF_FILES_OUT_DIR)
     if OUTPUT_DIR[-1]!="/":
         OUTPUT_DIR+=("/")
-    PREFIX_OUTPUT =      config.get(       C_CONF_FILES, C_CONF_FILES_PREFIX_OUTPUT)
+    PREFIX_OUTPUT =      config.get(       C_CONF_FILES, C_CONF_FILES_PREFIX_OUTPUT, fallback="OUT")
 
     if not os.path.isdir(INI_FOLDER):
         raise Exception("Cannot find experiment folder: {}".format(INI_FOLDER))

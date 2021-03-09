@@ -8,21 +8,25 @@ import io
 import time
 import findspark
 from pyspark.sql import SparkSession
+from pyspark import SparkConf
 from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
 from app.cx38 import CXworker
-
 
 class CXSworker(CXworker):
 
     @staticmethod
-    def start_spark(app_name=None):
+    def start_spark(app_name=None, spark_config_pairs=None):
         if app_name is None:
             app_name = "s" + time.strftime("%Y%m%d_%H%M%S")
         findspark.init()
-        spark = SparkSession \
-            .builder \
-            .appName(app_name) \
-            .getOrCreate()
+        spark = SparkSession.builder.appName(app_name)
+        if spark_config_pairs:
+            conf = SparkConf().setAll(spark_config_pairs)
+            spark = spark.config(conf=conf)
+        spark = spark.getOrCreate()
+        # TODO: configurable for debug...
+        #sc = spark.sparkContext
+        #print(sc.getConf().toDebugString())
         return spark.sparkContext
 
     @staticmethod

@@ -14,7 +14,7 @@ start_time = time.time()
 def run_spark_task(config_file):
     cxs = CXSworker(config_file=config_file)
 
-    sc = cxs.start_spark()
+    sc = cxs.start_spark(spark_config_pairs=cxs.config_gen.spark_config_pairs)
     cxs.run(sc)
     cxs.stop_spark(sc)
 

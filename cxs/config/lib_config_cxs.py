@@ -131,6 +131,13 @@ def get_configuration(file_log, config_file, v=0):
         OUTPUT_DIR+=("/")
     PREFIX_OUTPUT =      config.get(       C_CONF_FILES, C_CONF_FILES_PREFIX_OUTPUT, fallback="OUT")
 
+
+    # Spark
+
+    spark_config_pairs = None
+    if C_CONF_SPARK in config.sections():
+        spark_config_pairs = [list(j) for j in config.items(C_CONF_SPARK)]
+
     if not os.path.isdir(INI_FOLDER):
         raise Exception("Cannot find experiment folder: {}".format(INI_FOLDER))
 
@@ -169,6 +176,7 @@ def get_configuration(file_log, config_file, v=0):
         task_scaling_stations=TASK_SCALING_STATIONS,
         single_precision=SINGLE_PRECISION,
         out_dir=OUTPUT_DIR,
-        out_prefix=PREFIX_OUTPUT
+        out_prefix=PREFIX_OUTPUT,
+        spark_config_pairs=spark_config_pairs
     )
     return config

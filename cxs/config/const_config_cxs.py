@@ -24,6 +24,7 @@ C_CONF_FILES =                  "Files"
 C_CONF_FILES_OUT_DIR =          'Output directory'
 C_CONF_FILES_PREFIX_OUTPUT =    'Prefix for output'
 
+C_CONF_SPARK =                  "Spark"
 
 
 class ConfigCXS(object):
@@ -47,7 +48,8 @@ class ConfigCXS(object):
                  task_scaling_stations,
                  single_precision,
                  out_dir,
-                 out_prefix
+                 out_prefix,
+                 spark_config_pairs
                  ):
 
         self.fft_at_mapper = fft_at_mapper
@@ -69,3 +71,4 @@ class ConfigCXS(object):
         self.single_precision = single_precision
         self.out_dir = out_dir
         self.out_prefix = out_prefix
+        self.spark_config_pairs = spark_config_pairs

@@ -15,6 +15,8 @@ from app.cx38 import CXworker
 
 class CXSworker(CXworker):
 
+    debug_spark_partitions = False
+
     @staticmethod
     def start_spark(app_name=None, spark_config_pairs=None):
         if app_name is None:
@@ -57,17 +59,66 @@ class CXSworker(CXworker):
                 print(x, file=f_out)
 
     def run(self, sc):
-        def fun_sort(x):
-            def sort_list(x):
-                return x.split(KEY_SEP)[0].replace(SF_SEP, FIELD_SEP).split(FIELD_SEP)
-            return (x[0], list(sorted(x[1], key=sort_list)))
+
+        num_channels = self.num_channels
+        def f_x(x):
+            y = list(map(int,x.split("-")[-2:]))
+            y = y[0]*num_channels+y[1]
+            return y
 
         files = self.read_input_files(sc)
         data = files.flatMap(lambda rdd:self.process_file(rdd))
+        self.print_partitions(data, "map")
+
         data_grouped = data.reduceByKey(lambda x, y: x+y)
-        data_sorted = data_grouped.map(fun_sort)
+        self.print_partitions(data_grouped, "group")
+
+        data_sorted = data_grouped.repartitionAndSortWithinPartitions(self.num_partitions, f_x)
+        self.print_partitions(data_sorted, "repartition")
+
         data_reduced = data_sorted.flatMap(lambda rdd:self.reduce_lines(rdd))
         self.write_output(data_reduced)
+
+
+    # Debug
+
+    def print_partitions(self, df, extra=None):
+        if self.debug_spark_partitions:
+            if hasattr(df, "explain"):
+                df.explain()
+            if hasattr(df, "rdd"):
+                rdd = df.rdd
+                is_rdd = False
+            else:
+                rdd = df
+                is_rdd = True
+
+            if not extra:
+                extra = ""
+            else:
+                extra = " {} ".format(extra)
+            if is_rdd:
+                extra += " [RDD]"
+            else:
+                extra += " [DF]"
+            print("---------{}----------".format(extra))
+            numPartitions = rdd.getNumPartitions()
+            print("Total partitions: {}".format(numPartitions))
+            print("Partitioner: {}".format(rdd.partitioner))
+            parts = rdd.glom().collect()
+            i = 0
+            j = 0
+            for p in parts:
+                print("Partition {}:".format(i))
+                ps = []
+                for r in p:
+                    # print("Row {}:{}".format(j, r))
+                    np = r[0]
+                    if np not in ps:
+                        ps.append(np)
+                    j = j + 1
+                print(ps)
+                i = i + 1
 
     def run_checks(self):
 

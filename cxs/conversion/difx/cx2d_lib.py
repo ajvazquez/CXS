@@ -648,7 +648,7 @@ def show_line_cx(file_in,line_start,line_count,filter_line="px",v=1,path_src="")
     return(results)
 
 
-def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src=""):
+def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src="", skip_sxa=False):
     """
     Provides the sum of the L2-norm between all pairs of visibilities.
     Use only for debugging comparing two CorrelX output files (e.g. testing changes).
@@ -699,6 +699,9 @@ def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src=""):
         if force or not(error_diff):
             meta1=vis1[i][0]
             meta2=vis2[i][0]
+            if skip_sxa:
+                meta1 = meta1.split("sxa")[0]
+                meta2 = meta2.split("sxa")[0]
             if meta1!=meta2:
                 print(" DIFF: Different headers. (Line "+str(i)+"): "+meta1+" "+meta2)
                 error_diff=1

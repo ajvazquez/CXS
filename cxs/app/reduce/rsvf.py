@@ -1359,14 +1359,15 @@ def rsvf(codecs_serial,
                 if count_acc>0:
                     normalize_after_compute=True
                     [F_delays,F_rates,F_frac,F_fs,F_fs_pcal,F_side,F_first_sample]=restore_Fs(last_F_delays,last_F_rates,last_F_frac,last_F_fs,last_F_fs_pcal,last_F_side,last_F_first_sample,F_delays,F_rates,F_frac,F_fs,F_fs_pcal,F_side,F_first_sample)
-                    
+
                     ########
                     #  FX
                     ########
-                    [acc_mat,count_acc,count_sub_acc,n_sp,last_F_ind,\
-                         failed_acc_count,dismissed_acc_count,F1_partial,F_ind_partial,\
-                         acc_pcal,pre_pcal,count_acc_pcal,F_first_sample_partial,\
-                         F_adj_shift_partial,F_stack_shift,F_adj_shift_pcal,F_stack_shift_pcal,F_pcal_fix,F_lti] = compute_fx_for_all(F1_partial,F_ind_partial,F1,\
+                    try:
+                        [acc_mat,count_acc,count_sub_acc,n_sp,last_F_ind,\
+                             failed_acc_count,dismissed_acc_count,F1_partial,F_ind_partial,\
+                             acc_pcal,pre_pcal,count_acc_pcal,F_first_sample_partial,\
+                             F_adj_shift_partial,F_stack_shift,F_adj_shift_pcal,F_stack_shift_pcal,F_pcal_fix,F_lti] = compute_fx_for_all(F1_partial,F_ind_partial,F1,\
                                                                                              FFT_SIZE,WINDOWING,acc_mat,count_acc,\
                                                                                              normalize_after_compute,F_ind,\
                                                                                              last_F_ind,n_sp,failed_acc_count,\
@@ -1379,6 +1380,14 @@ def rsvf(codecs_serial,
                                                                                              F_frac,current_block_time,F_adj_shift_partial,\
                                                                                              F_stack_shift,F_adj_shift_pcal,F_stack_shift_pcal,\
                                                                                              F_pcal_fix,F_side,F_lti)
+                    except Exception as e:
+                        # TODO: debug
+                        error = "zR"+KEY_SEP+current_key_pair_accu+"Error in last write FX computation: {}".format(e)
+                        if group_output:
+                            output.append(error)
+                        else:
+                            print(line_out)
+                        failed_acc_count += 1
                     
                     #########
                     #  Pcal

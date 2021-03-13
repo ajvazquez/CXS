@@ -197,7 +197,7 @@ def adjust_shift_acc_pcal(acc_pcal,F_pcal_fix,bypass_adjust_pcal=0,v=0):
     |
     | **TO DO:**
     |
-    |  Asses error raised from this correction. It should be inside a sample in phase.
+    |  Assess error raised from this correction. It should be inside a sample in phase.
     |  Check that corrections are applied to the proper row (F_refs...).
     """
     if bypass_adjust_pcal==0:

@@ -107,12 +107,9 @@ else:
 
     # config
     from config.const_ini_files import C_INI_MEDIA_F_VDIF, C_INI_MEDIA_V_CUSTOM, C_INI_MEDIA_C_NO, \
-        C_INI_MEDIA_FRAMEBYTES, C_INI_MEDIA_FORMAT, C_INI_MEDIA_VERSION, C_INI_MEDIA_POLARIZATIONS, \
-        C_INI_MEDIA_CHANNELS, C_INI_MEDIA_FREQUENCIES, C_INI_MEDIA_SIDEBANDS, C_INI_MEDIA_FREQ_SAMPLE, \
-        C_INI_MEDIA_STATION, C_INI_ST_ID, C_INI_MEDIA_F_PCAL, C_INI_MEDIA_O_PCAL
+        C_INI_MEDIA_FREQ_SAMPLE, C_INI_ST_ID, C_INI_MEDIA_F_PCAL, C_INI_MEDIA_O_PCAL
     from config.lib_ini_files import find_nearest_seconds, get_rates_cache, get_delay_cache, \
-        get_param_serial, serialize_config, serial_params_to_array, get_val_vector, get_param_total,\
-        get_param_eq_vector, get_all_params_serial
+        get_param_serial, serialize_config, serial_params_to_array, get_all_params_serial, extract_data_media
     from config.lib_ini_files import get_vector_delay_ref
     from config.lib_ini_files import get_pair_st_so
 
@@ -658,7 +655,7 @@ def get_num_samples_per_frame(allsamples,num_channels,data_type):
 
 def check_time_frame(accu_block,rel_pos_frame,actual_frame_time,seconds_ref,seconds_duration):
     """
-    Check if actual timestamp of this frame is inside the experiment time wnidow.
+    Check if actual timestamp of this frame is inside the experiment time window.
     
     Parameters
     ----------
@@ -1180,13 +1177,6 @@ def get_codebook_info(codecs_serial,params_media,current_file_name,station_name,
         apply_compression=True
     
     return([encoding,codebook,codebook_name,apply_compression])
-                    
-
-
-
-
-
-
 
 
 
@@ -1319,22 +1309,12 @@ def msvf(tot_stations,
 
     # Read information from ini files (default)
     if use_ini_info==1: 
-        
-        forced_frame_length =                   int(get_param_serial(   params_media,current_file_name,C_INI_MEDIA_FRAMEBYTES))
-        forced_format =                             get_param_serial(   params_media,current_file_name,C_INI_MEDIA_FORMAT)
-        forced_version =                            get_param_serial(   params_media,current_file_name,C_INI_MEDIA_VERSION)
-        tot_pols =                                  get_param_total(    params_media,current_file_name,C_INI_MEDIA_POLARIZATIONS)
-        
-        pols_assoc_vector=     [int(val) for val in get_param_eq_vector(params_media,current_file_name,C_INI_MEDIA_POLARIZATIONS)]
-        channels_assoc_vector= [int(val) for val in get_param_eq_vector(params_media,current_file_name,C_INI_MEDIA_CHANNELS)]
-        freqs_assoc_vector = [float(val) for val in get_param_eq_vector(params_media,current_file_name,C_INI_MEDIA_FREQUENCIES,modein="str")]
-        sidebands_assoc_vector=                     get_val_vector(     params_media,current_file_name,C_INI_MEDIA_SIDEBANDS)
-        freq_sample_in =                   int(float(get_param_serial(  params_media,current_file_name,C_INI_MEDIA_FREQ_SAMPLE)))
-        station_name =                              get_param_serial(params_media,current_file_name,C_INI_MEDIA_STATION)
-        
+
+        [forced_frame_length, forced_format, forced_version, tot_pols, pols_assoc_vector,\
+         channels_assoc_vector, freqs_assoc_vector, sidebands_assoc_vector, freq_sample_in, station_name] = extract_data_media(params_media, current_file_name)
         station_id =                            int(get_param_serial(params_stations,station_name,C_INI_ST_ID))
         
-        num_channels_spec=len(set(channels_assoc_vector))
+        num_channels_spec = len(set(channels_assoc_vector))
 
         #TODO: generalize for multiple sources...
 
@@ -1427,7 +1407,7 @@ def msvf(tot_stations,
                 # Get number of samples per channel
                 num_channels = 2**log_2_channels
                 [tot_samples_per_channel_and_frame,tot_samples_per_channel_and_frame_full]=get_num_samples_per_frame(allsamples,num_channels,data_type)
-                
+
 
                 ###########################
                 #   Delay computations
@@ -1437,7 +1417,7 @@ def msvf(tot_stations,
                 # Get the timestamp for the first sample in this frame (i.e. adjust integer second with offset of frame number)
                 adjusted_frame_time=adjust_seconds_fr(tot_samples_per_channel_and_frame_full,\
                                                       freq_sample_in,seconds_fr,frame_num)
-                
+
                 
                 # Get absolute delay for this frame, based on its timestamp
                 [i_f,front_time]=get_acc_block_for_time(adjusted_frame_time,list_acc_frontiers)
@@ -1445,7 +1425,7 @@ def msvf(tot_stations,
                                                                         vector_seconds_ref=vector_seconds_ref,seconds_frame=adjusted_frame_time,\
                                                                         pair_st_so=pair_st_so,\
                                                                         front_time=front_time,cache_rates=cache_rates)
-                
+
                 # Shift
                 ref_offset=ref_delay*fs
                 ref_offset=int(np.modf(ref_offset)[1])

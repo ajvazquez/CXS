@@ -684,6 +684,22 @@ def get_delay_cache(seconds_fr_nearest,pair_st_so,params_delays,cache_delays=[])
     #print(delays_out)
     return(delays_out)
 
-# <codecell>
 
+def extract_data_media(params_media, current_file_name):
 
+    forced_frame_length = int(get_param_serial(params_media, current_file_name, C_INI_MEDIA_FRAMEBYTES))
+    forced_format = get_param_serial(params_media, current_file_name, C_INI_MEDIA_FORMAT)
+    forced_version = get_param_serial(params_media, current_file_name, C_INI_MEDIA_VERSION)
+    tot_pols = get_param_total(params_media, current_file_name, C_INI_MEDIA_POLARIZATIONS)
+
+    pols_assoc_vector = [int(val) for val in
+                         get_param_eq_vector(params_media, current_file_name, C_INI_MEDIA_POLARIZATIONS)]
+    channels_assoc_vector = [int(val) for val in get_param_eq_vector(params_media, current_file_name, C_INI_MEDIA_CHANNELS)]
+    freqs_assoc_vector = [float(val) for val in
+                          get_param_eq_vector(params_media, current_file_name, C_INI_MEDIA_FREQUENCIES, modein="str")]
+    sidebands_assoc_vector = get_val_vector(params_media, current_file_name, C_INI_MEDIA_SIDEBANDS)
+    freq_sample_in = int(float(get_param_serial(params_media, current_file_name, C_INI_MEDIA_FREQ_SAMPLE)))
+    station_name = get_param_serial(params_media, current_file_name, C_INI_MEDIA_STATION)
+
+    return [forced_frame_length, forced_format, forced_version, tot_pols, pols_assoc_vector, \
+            channels_assoc_vector, freqs_assoc_vector, sidebands_assoc_vector, freq_sample_in, station_name]

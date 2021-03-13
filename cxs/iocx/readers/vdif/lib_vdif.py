@@ -59,9 +59,7 @@ import sys
 
 PY3 = sys.version_info[0] == 3
 
-USE_BITARRAY=0
-if USE_BITARRAY:
-    from bitarray import bitarray                   # Enable for VDIF creation functions (testing)
+from bitarray import bitarray                   # Enable for VDIF creation functions (testing)
 import struct
 import numpy as np
 from datetime import date,datetime,timedelta
@@ -511,7 +509,7 @@ def read_vdif_frame(f,show_errors=0,forced_frame_length=0,offset_bytes=0,v=0,ret
         else:
             frame_length=header[7]
             bits_per_sample=header[9]
-        
+
         # Force frame length
         if forced_frame_length>0:
             frame_length=forced_frame_length
@@ -863,7 +861,7 @@ def disp_list(a):
     return(','.join(map(str,a)))
 
 
-def get_vdif_stats(filename,packet_limit=-1,forced_packet_size=0,offset_bytes=0,only_offset_once=1,v=1,short_output=0):
+def get_vdif_stats(filename,packet_limit=-1,forced_packet_size=0,offset_bytes=0,only_offset_once=1,v=1,short_output=0, extended=False, first_second_only=False):
     """
     Get information from vdif file by processing headers. As many headers as packet_limit are processed.
     Each of the output parameters are vectors with all the possible values found.
@@ -916,6 +914,9 @@ def get_vdif_stats(filename,packet_limit=-1,forced_packet_size=0,offset_bytes=0,
     v_bpsamp=[]
     v_threads=[]
 
+    num_samples = 0
+    first_second = None
+
     total_file_size=0 # Including headers
     total_size=0      # Only data
 
@@ -956,7 +957,13 @@ def get_vdif_stats(filename,packet_limit=-1,forced_packet_size=0,offset_bytes=0,
             # Decode header
             [seconds_fr,invalid,legacy,ref_epoch,frame_num,vdif_version,log_2_channels,
                 frame_length,data_type,bits_per_sample,thread_id,station_id] = header
-            
+
+
+            if first_second_only is None and first_second != seconds_fr:
+                break
+            first_second = seconds_fr
+            num_samples += len(samples)
+
             if ref_epoch not in v_epoch:
                 v_epoch+=[ref_epoch]
             if seconds_fr not in v_seconds:
@@ -1021,8 +1028,13 @@ def get_vdif_stats(filename,packet_limit=-1,forced_packet_size=0,offset_bytes=0,
         print(" Num.channels: ".ljust(ljv) + disp_list(v_numchannels))
         print(" Num.threads: ".ljust(ljv) + disp_list(v_threads))
         print(" Bits per sample: ".ljust(ljv) + disp_list(v_bpsamp))
-        
-    return([v_stations,v_seconds,v_frames,v_sizes,total_size])
+        print(" Frames per second: ".ljust(ljv) + str(len(v_frames)))
+        print(" Samples read:".ljust(ljv) + str(num_samples))
+
+    if not extended:
+        return([v_stations,v_seconds,v_frames,v_sizes,total_size])
+    else:
+        return([v_stations,v_seconds,v_frames,v_sizes,total_size, v_bpsamp, v_data_type, num_samples, v_numchannels])
 
 
 
@@ -1055,7 +1067,7 @@ def get_vdif_num_frames(filename,packet_limit=-1,forced_packet_size=0,offset_byt
     keep_reading=1
     SHOW_ERRORS = 0
 
-    
+
     packet_count = 0
     reader = f_read #sys.stdin
 

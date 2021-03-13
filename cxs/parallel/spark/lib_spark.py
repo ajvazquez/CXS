@@ -12,6 +12,7 @@ from pyspark import SparkConf
 from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
 from app.cx38 import CXworker
 
+
 class CXSworker(CXworker):
 
     @staticmethod
@@ -67,3 +68,56 @@ class CXSworker(CXworker):
         data_sorted = data_grouped.map(fun_sort)
         data_reduced = data_sorted.flatMap(lambda rdd:self.reduce_lines(rdd))
         self.write_output(data_reduced)
+
+    def run_checks(self):
+
+        # TODO: refactor
+        import os
+        import glob
+        from config.lib_ini_files import get_val_vector, C_INI_MEDIA_S_FILES, C_INI_MEDIA_LIST, serial_params_to_array, extract_data_media
+        from iocx.readers.vdif.lib_vdif import get_vdif_stats
+
+        params_media=serial_params_to_array(self.config_ini.media_serial_str)
+        data_dir = self.config_gen.data_dir
+        if data_dir.startswith("file://"):
+            data_dir = data_dir[7:]
+        input_files = get_val_vector(params_media,C_INI_MEDIA_S_FILES,C_INI_MEDIA_LIST)
+        paths_files = glob.glob(data_dir)
+        count_match = 0
+        tot = len(paths_files)
+        found = []
+        count_errors = 0
+        for path_file in paths_files:
+            for filename in input_files:
+                if filename == os.path.basename(path_file):
+                    count_match += 1
+                    x = extract_data_media(params_media, filename)
+                    fs = x[-2]
+                    try:
+                        [v_stations, v_seconds, v_frames, v_sizes, total_size, v_bpsample, v_data_type, num_samples, channels] = get_vdif_stats(path_file, first_second_only=True, v=0, extended=True)
+                        num_channels = channels[0]
+                        num_samples = num_samples/num_channels
+                        bps = v_bpsample[0]
+                        num_samples = num_samples/bps
+                        if v_data_type[0]:
+                            num_samples = num_samples/2
+                        seconds_in_frame_per_second = num_samples/fs
+                        if not abs(seconds_in_frame_per_second-1)<1e-10:
+                            dt = "complex" if v_data_type[0] else "real"
+                            fs_est = num_samples
+                            print("WARNING: {} has {} s/s ({} channels; {} frames/s; {} samples; deduced fs: {:.2e} Hz; configured fs: {:.2e} Hz)".format(path_file, seconds_in_frame_per_second, num_channels, len(v_frames), dt, fs_est, fs))
+                            count_errors += 1
+
+                        # TODO: check channels and threads configured in media.ini
+
+                        found.append(path_file)
+                    except:
+                        print("ERROR: cannot access input file {}".format(path_file))
+                        count_errors += 1
+        not_found = [x for x in paths_files if x not in found]
+        if not count_match == tot:
+            print("ERROR: could not find some input files: {}".format(", ".join(not_found)))
+        else:
+            print("OK: checked access to all input files: {}".format(", ".join(found)))
+        if not count_errors:
+            print("OK: proper configuration for media")

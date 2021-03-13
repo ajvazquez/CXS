@@ -24,12 +24,22 @@ def run_spark_task(config_file):
     Path(cxs.out_file).touch()
 
 
+def run_checks(config_file):
+    cxs = CXSworker(config_file=config_file)
+    cxs.run_checks()
+
+
+
 def main():
     cparser = argparse.ArgumentParser(description='CXS338')
 
     cparser.add_argument('-c', action="store", \
-                         dest="configuration_file",default=DEFAULT_CONFIG, \
+                         dest="configuration_file", default=DEFAULT_CONFIG, \
                          help="Specify a configuration file.")
+
+    cparser.add_argument('--check', action="store_true", \
+                         dest="check", default=False, \
+                         help="Check configuration (does not run correlation).")
 
     args = cparser.parse_args()
     config_file = args.configuration_file
@@ -38,6 +48,10 @@ def main():
     if not os.path.exists(config_file):
         error = "Configuration file {} does not exist".format(config_file)
         print("ERROR: {}".format(error))
+
+    if not error and args.check:
+        run_checks(config_file)
+        error = "Check run"
 
     if not error:
         run_spark_task(config_file)

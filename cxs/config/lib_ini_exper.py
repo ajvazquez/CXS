@@ -463,7 +463,8 @@ def process_ini_files(data_dir, ini_stations, ini_sources, ini_delay_model, ini_
 
 
     seconds_per_step = float(accumulation_time)
-    print(" Delay computations for every acc period!")
+    # TODO: enable
+    #print(" Delay computations for every acc period!")
     tot_steps=int(np.ceil(seconds_duration/seconds_per_step))
     #correlation.ini
     delay_error=None

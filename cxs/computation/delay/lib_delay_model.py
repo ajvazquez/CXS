@@ -1143,8 +1143,8 @@ def compute_initial_delays(params_array_delay_model,params_array_stations,s_st,s
 
     [seconds_inc_v,max_saved,min_saved,v_delays,v_delay_rates,no_offset_total] = info_polynomials
 
-    print("")
     if SHOW_DELAY_INFO:
+        print("")
         print("Delay model:")
         print(" Found delay models for t = "+str(seconds_ref_in)+" + ["+', '.join(map(str,seconds_inc_v))+"] s")
         if no_offset_total>0:

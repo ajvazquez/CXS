@@ -122,7 +122,7 @@ def get_configuration(file_log, config_file, v=0):
     INI_MEDIA = INI_FOLDER + "/" +       config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA, fallback="media.ini")
     INI_CORRELATION = INI_FOLDER + "/" + config.get(   C_CONF_EXP, C_CONF_EXP_CORRELATION, fallback="correlation.ini")
     #DATA_DIR = INI_FOLDER + "/" +        config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SUB) + "/"
-    DATA_DIR =                           config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SPARK) + "/"
+    DATA_DIR =                           config.get(   C_CONF_EXP, C_CONF_EXP_MEDIA_SPARK)
     #DATA_DIR = None
 
     # Files

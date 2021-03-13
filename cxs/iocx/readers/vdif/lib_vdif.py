@@ -594,8 +594,8 @@ def reshape_samples(allsamples,data_type,samples_in_frame,num_channels):
     # If complex data need to group differently
     if data_type==0:
         # real data
-        samples = allsamples.reshape((samples_in_frame//num_channels,num_channels)).T
-    else:   
+        samples = allsamples.reshape((samples_in_frame,num_channels)).T
+    else:
         # complex data
         
         

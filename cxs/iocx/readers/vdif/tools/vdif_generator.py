@@ -45,6 +45,7 @@ Module for generating test input files (VDIF).
 #MIT Haystack Observatory
 
 from __future__ import print_function
+import argparse
 import sys
 import os
 import numpy as np
@@ -67,7 +68,7 @@ else:
 
   
     
-def generate_multi_sine_wave(N,fs,fv,x0,ampv,noise_amp,file_log=sys.stdout,v=1,v_debug=1):
+def generate_multi_sine_wave(N,fs,fv,x0,ampv,noise_amp,file_log=sys.stdout,v=1,v_debug=1, force_complex=False):
     """
     Generate test signal composed of multiple sine waves and noise.
     
@@ -104,7 +105,11 @@ def generate_multi_sine_wave(N,fs,fv,x0,ampv,noise_amp,file_log=sys.stdout,v=1,v
         if v_debug==1:
             print("x0: "+str(x0), end=" ",file=file_log)
             print("N: "+str(N),file=file_log)
-    x = np.array(range(x0,x0+N))
+    if not force_complex:
+        x = np.array(range(x0,x0+N))
+    else:
+        x = np.array(range(x0,x0+N//2))
+        x = np.repeat(x, 2)
     x_times = x*T
     
     ssines = np.zeros(N)
@@ -198,7 +203,7 @@ def filter_signals_fir(y,numtaps,num_channels,channel_mapping=[],file_log=sys.st
             downconv = np.real(np.multiply(filtered,np.exp(1j*np.pi*(float(i)/float(num_channels))*np.arange(len(y)))))
             #if i>0:
             #    downconv*=2
-            resampled = signal.resample(downconv,len(y)/num_channels)
+            resampled = signal.resample(downconv,len(y)//num_channels)
             filtered_signals += [resampled]
             #filtered_signals += [signal.convolve(y,filterbank[-1],'same')]
             
@@ -223,7 +228,8 @@ def get_filename_vg(prefix,station,ext=".vt"):
 def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,sines_f_in,sines_amp_in,\
                   prefix,signal_limits,log_2_channels,num_threads,threaded_channels,num_taps_filterbank,\
                   date_vector,seconds_duration,simple_file="file_test_simple",unquant_file="file_test_unquant",\
-                  v=0,file_log=sys.stdout,data_dir="./",write_raw=0,channel_mapping=[],mode_in="sines",v_debug=0):
+                  v=0,file_log=sys.stdout,data_dir="./",write_raw=0,channel_mapping=[],mode_in="sines",v_debug=0,\
+                  force_complex=False, fs=None):
     """
     Generator for VDIF test (.vt) data. Use for debugging only.
     
@@ -308,7 +314,14 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
     
     num_channels = 2**log_2_channels    
     # Sampling frequency (should be 2*BW)
-    fs = 2*bw_in
+    if fs is None:
+        fs = 2 * bw_in
+        if force_complex:
+            fs = bw_in
+    else:
+        bw_in = fs/2
+        if force_complex:
+            bw_in = fs
     if num_threads>1 and threaded_channels:
         num_bands=num_threads
     else:
@@ -326,9 +339,13 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
     if diff_bytes != 0:
         if v==1:
             print("Frame size is not a multiple of bits/sample",file=file_log)
-    
-    frames_per_second = int(np.ceil(num_channels * fs / samples_per_frame))
-    
+
+    # Note: that fs is for the whole signal
+    assert (fs % samples_per_frame == 0), "The overall sampling frequency {} does not divide the number of samples per frame {}".format(fs, samples_per_frame)
+    frames_per_second = int(np.ceil(fs / samples_per_frame))
+    if force_complex:
+        frames_per_second *= 2
+
     diff_samples = float(frames_per_second) - (num_channels*fs) / samples_per_frame
     
     
@@ -336,7 +353,7 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
 
     # Data will be channelized with same length as input. Reduce number of samples to fit payload size.
     tot_samples = frames_per_second*samples_per_frame #// num_channels
-    
+
     frame_length=0
     if write_raw==1:
         f_simple_out=open(data_dir+simple_file,'w')  
@@ -400,9 +417,9 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
     print(" VDIF file(s):        " + ','.join([get_filename_vg(prefix,station) for station in range(tot_stations)]))
     print(" Samples per frame:   " + str(samples_per_frame))
     print(" Frames per second:   " + str(frames_per_second))
-    print(" Estimated file size: " + str(frames_per_second) + " fps * "+\
-              str(bytes_payload_per_frame+(HEADER_VDIF_WORDS*WORD_SIZE/4))\
-              + " B/f * " +  str(seconds_duration) + " s = " + str(estimated_size) + " B (" + str(estimated_size/1024) +" kB)")
+    print(" Estimated file size: " + str(frames_per_second) + " fps * ("+\
+              str(bytes_payload_per_frame)+"+"+str(HEADER_VDIF_WORDS*WORD_SIZE/4)\
+              + ") B/f * " +  str(seconds_duration) + " s = " + str(estimated_size) + " B (" + str(int(estimated_size//1024)) +" kB)")
     
     if diff_samples != 0:
         if v==1:
@@ -415,6 +432,8 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
     #tot_steps=2
     tot_steps=frames_per_second
     N_partial = int(N/tot_steps)
+    generated_samples = 0
+    generated_frames = 0
     
     all_frame_ids=[]
     [year,month,day,hour,minute,second]=date_vector
@@ -430,9 +449,9 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
         
         for second_offset in seconds:
             frame_id_adjusted = -1
-            
+
             for small_step in range(tot_steps):
-            
+
                 # Time offset for generated data
                 x0_adj = x0 + small_step * N_partial
 
@@ -442,7 +461,7 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
         
                 # Generate multi-sine wave
                 ##if mode_in=="sines":
-                ymulti = generate_multi_sine_wave(N=N_partial,fs=fs,x0=x0_adj,fv=sines_f,ampv=sines_amp,noise_amp=noise_amp,file_log=file_log,v=v,v_debug=v_debug)
+                ymulti = generate_multi_sine_wave(N=N_partial,fs=fs,x0=x0_adj,fv=sines_f,ampv=sines_amp,noise_amp=noise_amp,file_log=file_log,v=v,v_debug=v_debug,force_complex=force_complex)
                 ##elif mode_in==#[...]
                 ##    #[...]
         
@@ -496,14 +515,14 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
                 else:
                     frames_per_second_adjusted = int(frames_per_second%(frames_per_second//tot_steps))
                     frames_per_second_adjusted =int(np.ceil(frames_per_second/tot_steps))
-                    
+
                 for frame_id in range(frames_per_second_adjusted): 
                     frame_id_adjusted+=1
                     all_frame_ids += [frame_id_adjusted]
         
                     # For each thread:
                     for tid in range(0,num_threads):
-            
+
         
                         #Create header
                         [epoch_fr,seconds_fr] = date_to_vdif(year,month,day,hour,minute,second,second_offset)
@@ -513,7 +532,7 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
                         frame_num=frame_id_adjusted
                         vdif_version=7
                         log_2_channels= log_2_channels #0
-                        data_type = 0
+                        data_type = int(force_complex)
                         bits_per_sample=bits_quant
                         thread_id=tid
                         station_id=station
@@ -522,7 +541,9 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
                         y_quant = multi_channel_threads_quantized[tid]
                         y_quant_start_index = frame_id*samples_per_frame
                         y_quant_end_index = (frame_id+1)*min(len(y_quant),samples_per_frame)
-                
+
+                        generated_samples += (y_quant_end_index-y_quant_start_index)
+
                         samples_words = write_samples(y_quant[y_quant_start_index:y_quant_end_index],bits_quant,word_size=WORD_SIZE)
                 
                         frame_length = (len(samples_words)+HEADER_VDIF_WORDS)*WORD_SIZE//8
@@ -541,6 +562,8 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
 
                         write_words_to_file(f_out,header1)
                         write_words_to_file(f_out,samples_words)
+
+                        generated_frames += 1
 
             
                 if write_raw==1:
@@ -569,6 +592,9 @@ def generate_vdif(tot_stations,bw_in,bytes_payload_per_frame,bits_quant,snr_in,s
     
     if v_debug:
         print(all_frame_ids)
+    print("Total samples: {}".format(tot_samples))
+    print("Generated samples (per station): {}".format(generated_samples/tot_stations))
+    print("Generated frames (per station): {}".format(generated_frames/tot_stations))
     return(frame_length)
 
 
@@ -741,14 +767,8 @@ def plot_signal_from_packets(filename,bw,only_station=-1,packet_limit=-1,same_fi
                                  "Signal channel (thread = " + str(tid) + ", channel = " + str(cid) + ") (FFT)",overlay=0)
         else:
             plot_fft_set(dequant_signals,freq_sample,"Signal channels (nchannels = " + str(tot_channels) + ") (FFT)",overlay=1)
-    
 
 
-
-
-
-
-    
 #if __name__ == '__main__':
 #   main()    
 

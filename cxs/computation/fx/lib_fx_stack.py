@@ -1783,7 +1783,7 @@ def compute_fx_for_all(F1_partial,F_ind_partial,F1,fft_size,windowing,acc_mat,co
             index_scaling_pair=F_ind.index(scaling_pair)
         
         #if (last_F_ind is None)or(last_F_ind==F_ind):
-        if (last_F_ind is None)or(last_F_ind.sort()==F_ind_partial.sort()):
+        if (last_F_ind is None) or (last_F_ind == F_ind):
             #last_F_ind=F_ind
             last_F_ind=F_ind_partial[:]
             

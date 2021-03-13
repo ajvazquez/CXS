@@ -531,15 +531,18 @@ def update_stored_samples(v_dequant,F1,F_ind,key_station_pol,F_delays,F_rates,F_
         F_first_sample=[first_sample_adjusted]
         F_side=[[sideband,data_type]]
     else:
-        F1+=[v_dequant]
-        F_ind+=[key_station_pol]
-        F_delays+=[abs_delay]
-        F_rates+=[rate_delay]
-        F_frac+=[[fractional_sample_delay,shift_delay]]
-        F_fs+=[fs]
-        F_fs_pcal+=[fs_pcal]
-        F_first_sample+=[first_sample_adjusted]
-        F_side+=[[sideband,data_type]]
+        # Always same sorting
+        F_ind.append(key_station_pol)
+        F_ind = list(sorted(F_ind))
+        new_pos = F_ind.index(key_station_pol)
+        F1.insert(new_pos, v_dequant)
+        F_delays.insert(new_pos, abs_delay)
+        F_rates.insert(new_pos, rate_delay)
+        F_frac.insert(new_pos, [fractional_sample_delay, shift_delay])
+        F_fs.insert(new_pos, fs)
+        F_fs_pcal.insert(new_pos, fs_pcal)
+        F_first_sample.insert(new_pos, first_sample_adjusted)
+        F_side.insert(new_pos, [sideband, data_type])
 
     return([F1,F_ind,F_delays,F_rates,F_fs,F_fs_pcal,F_first_sample,F_frac,F_side,fft_size_out])
 

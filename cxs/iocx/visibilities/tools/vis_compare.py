@@ -57,15 +57,19 @@ def main():
                          dest="force",default="0",\
                          help="Force execution even if headers or number of visibilities differ.")
 
+    cparser.add_argument('-v', action="store_true", \
+                         dest="verbose",default=False, \
+                         help="Force execution even if headers or number of visibilities differ.")
 
     args =     cparser.parse_args()
     file_1 =   args.file_1
     file_2 =   args.file_2
     force =    int(args.force)
+    verbose = args.verbose
     path_src = os.path.dirname(sys.argv[0])
 
 
-    cx2d_lib.get_error_indicator(file_1,file_2,force,path_src)
+    cx2d_lib.get_error_indicator(file_1,file_2,force,path_src, verbose=verbose)
 
 if __name__ == '__main__':
     main()

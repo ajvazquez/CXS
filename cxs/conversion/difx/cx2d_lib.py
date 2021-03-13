@@ -648,7 +648,7 @@ def show_line_cx(file_in,line_start,line_count,filter_line="px",v=1,path_src="")
     return(results)
 
 
-def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src="", skip_sxa=False):
+def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src="", skip_sxa=False, sort_before_check=True, verbose=False):
     """
     Provides the sum of the L2-norm between all pairs of visibilities.
     Use only for debugging comparing two CorrelX output files (e.g. testing changes).
@@ -695,6 +695,10 @@ def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src="", skip_sxa=Fals
         print("  Different number of lines: "+str(len_vis1)+" "+str(len_vis2))
         error_diff=1
 
+    if sort_before_check:
+        vis1 = list(sorted(vis1))
+        vis2 = list(sorted(vis2))
+
     for i in range(len(vis1)):
         if force or not(error_diff):
             meta1=vis1[i][0]
@@ -717,6 +721,8 @@ def get_error_indicator(file_vis_1,file_vis_2,force=0,path_src="", skip_sxa=Fals
             
             sub=np.subtract(np.array(vis1[i][1]),np.array(vis2[i][1]))
             acc_res+=np.real(np.dot(sub,np.conj(sub))) # Imaginary part will be zero, do not show warning
+            if verbose:
+                print("{} {} -> {}".format(meta1, meta2, acc_res))
 
     print(" Visibilities compared:".ljust(jv)+str(i+1))
     

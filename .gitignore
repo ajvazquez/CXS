@@ -5,6 +5,10 @@ conf/*
 !conf/cxs338_full.ini
 examples/test_dataset_vgos/delays.ini*
 examples/test_dataset_vgos/cx_202*
+examples/test_dataset_test/*/cx_202*
+examples/test_dataset_test/*/*.ini_mod*
+examples/test_dataset_test/*/delays.ini*
+examples/test_dataset_test/*/media/*
 output/
 app/*
 !app/info.txt

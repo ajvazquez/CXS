@@ -54,7 +54,8 @@ else:
         DELAY_MODEL_RCR_MARKER, DELAY_MODEL_RCC_MARKER, DELAY_MODEL_RCM_MARKER, DELAY_MODEL_DDD_MARKER, \
         DELAY_MODEL_SIM_MARKER
     from config.const_ini_files import C_INI_ST_CLOCK_REF, C_INI_ST_CLOCK_OFFSET, C_INI_ST_CLOCK_POLY, C_INI_MODEL_DELAY
-    from config.lib_ini_files import get_val_vector, get_all_sections, get_section_delay_model, get_pair_st_so
+    from config.lib_ini_files import get_val_vector, get_all_sections, get_section_delay_model, get_pair_st_so, \
+        get_seconds_ini_str
 
 
 try:
@@ -861,32 +862,34 @@ def set_config_delay(s_delay,st_so,seconds_i,a_delay,r_delay,f_delay,poly_diff,c
          updated version of input with added information.
     """
     # Store same polynomials as used previously, otherwise there will be offsets
+   
+    sec = get_seconds_ini_str(seconds_i)
     
-    s_delay.set(st_so, DELAY_MODEL_ABS_MARKER+str(seconds_i),          str(a_delay))
-    s_delay.set(st_so, DELAY_MODEL_REL_MARKER+str(seconds_i),  get_str_scf(r_delay))
-    s_delay.set(st_so, DELAY_MODEL_REF_MARKER+str(seconds_i),  get_str_scf(f_delay))
+    s_delay.set(st_so, DELAY_MODEL_ABS_MARKER+sec,          str(a_delay))
+    s_delay.set(st_so, DELAY_MODEL_REL_MARKER+sec,  get_str_scf(r_delay))
+    s_delay.set(st_so, DELAY_MODEL_REF_MARKER+sec,  get_str_scf(f_delay))
     
     # See const_ini_files.py for descriptions
-    s_delay.set(st_so, DELAY_MODEL_RR0_MARKER+str(seconds_i), get_str_scf(poly_diff[0]))
-    s_delay.set(st_so, DELAY_MODEL_RR1_MARKER+str(seconds_i), get_str_scf(poly_diff[1]))
-    s_delay.set(st_so, DELAY_MODEL_RR2_MARKER+str(seconds_i), get_str_scf(poly_diff[2]))
+    s_delay.set(st_so, DELAY_MODEL_RR0_MARKER+sec, get_str_scf(poly_diff[0]))
+    s_delay.set(st_so, DELAY_MODEL_RR1_MARKER+sec, get_str_scf(poly_diff[1]))
+    s_delay.set(st_so, DELAY_MODEL_RR2_MARKER+sec, get_str_scf(poly_diff[2]))
     
-    s_delay.set(st_so, DELAY_MODEL_RC0_MARKER+str(seconds_i),         str(clock_diff[0]))
-    s_delay.set(st_so, DELAY_MODEL_RC1_MARKER+str(seconds_i),         str(clock_diff[1]))
+    s_delay.set(st_so, DELAY_MODEL_RC0_MARKER+sec,         str(clock_diff[0]))
+    s_delay.set(st_so, DELAY_MODEL_RC1_MARKER+sec,         str(clock_diff[1]))
     
-    s_delay.set(st_so, DELAY_MODEL_ZC0_MARKER+str(seconds_i),         str(clock_abs[0]))
-    s_delay.set(st_so, DELAY_MODEL_ZC1_MARKER+str(seconds_i),         str(clock_abs[1]))
+    s_delay.set(st_so, DELAY_MODEL_ZC0_MARKER+sec,         str(clock_abs[0]))
+    s_delay.set(st_so, DELAY_MODEL_ZC1_MARKER+sec,         str(clock_abs[1]))
     
-    s_delay.set(st_so, DELAY_MODEL_RRR_MARKER+str(seconds_i),         str(seconds_from_ref))
+    s_delay.set(st_so, DELAY_MODEL_RRR_MARKER+sec,         str(seconds_from_ref))
 
-    s_delay.set(st_so, DELAY_MODEL_RCR_MARKER+str(seconds_i),         str(seconds_diff_clock))
-    s_delay.set(st_so, DELAY_MODEL_RCM_MARKER+str(seconds_i),         str(m_delay))
-    s_delay.set(st_so, DELAY_MODEL_RCC_MARKER+str(seconds_i),         str(c_delay))
+    s_delay.set(st_so, DELAY_MODEL_RCR_MARKER+sec,         str(seconds_diff_clock))
+    s_delay.set(st_so, DELAY_MODEL_RCM_MARKER+sec,         str(m_delay))
+    s_delay.set(st_so, DELAY_MODEL_RCC_MARKER+sec,         str(c_delay))
     
-    s_delay.set(st_so, DELAY_MODEL_DDD_MARKER+str(seconds_i),         str(delta_reference_delay))
+    s_delay.set(st_so, DELAY_MODEL_DDD_MARKER+sec,         str(delta_reference_delay))
     
     # For debugging:
-    s_delay.set(st_so, DELAY_MODEL_SIM_MARKER+str(seconds_i),         str(section_in_model))
+    s_delay.set(st_so, DELAY_MODEL_SIM_MARKER+sec,         str(section_in_model))
     
     return(s_delay)
 

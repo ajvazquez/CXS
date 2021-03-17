@@ -73,6 +73,8 @@ except ImportError:
     import ConfigParser as configparser
 
 
+def get_seconds_ini_str(seconds):
+    return "{:.3f}".format(seconds)
 
 
 def serialize_config(sources_file='media.ini'):
@@ -596,21 +598,22 @@ def get_rates_cache(seconds_fr_nearest,pair_st_so,params_delays,cache_rates=[]):
         [rate_delay,ref_delay,abs_delay,delay]= cache_rates[2][0]#found_rates
         
     else:
-        
+        str_seconds = get_seconds_ini_str(seconds_fr_nearest)
         #if VERBOSE_INI_DELAYS:
-        rr0_epoch=DELAY_MODEL_RR0_MARKER+str(seconds_fr_nearest)
-        rr1_epoch=DELAY_MODEL_RR1_MARKER+str(seconds_fr_nearest)
-        rr2_epoch=DELAY_MODEL_RR2_MARKER+str(seconds_fr_nearest)
-        rrr_epoch=DELAY_MODEL_RRR_MARKER+str(seconds_fr_nearest)
-        rc0_epoch=DELAY_MODEL_RC0_MARKER+str(seconds_fr_nearest)
-        rc1_epoch=DELAY_MODEL_RC1_MARKER+str(seconds_fr_nearest)
-        zc0_epoch=DELAY_MODEL_ZC0_MARKER+str(seconds_fr_nearest)
-        zc1_epoch=DELAY_MODEL_ZC1_MARKER+str(seconds_fr_nearest)
-        rcr_epoch=DELAY_MODEL_RCR_MARKER+str(seconds_fr_nearest)
-        rcm_epoch=DELAY_MODEL_RCM_MARKER+str(seconds_fr_nearest)
-        rcc_epoch=DELAY_MODEL_RCC_MARKER+str(seconds_fr_nearest)
-        ddd_epoch=DELAY_MODEL_DDD_MARKER+str(seconds_fr_nearest)
-        rate_delay = [float(get_param_serial(params_delays,pair_st_so,rr0_epoch)),\
+        rr0_epoch=DELAY_MODEL_RR0_MARKER+str_seconds
+        rr1_epoch=DELAY_MODEL_RR1_MARKER+str_seconds
+        rr2_epoch=DELAY_MODEL_RR2_MARKER+str_seconds
+        rrr_epoch=DELAY_MODEL_RRR_MARKER+str_seconds
+        rc0_epoch=DELAY_MODEL_RC0_MARKER+str_seconds
+        rc1_epoch=DELAY_MODEL_RC1_MARKER+str_seconds
+        zc0_epoch=DELAY_MODEL_ZC0_MARKER+str_seconds
+        zc1_epoch=DELAY_MODEL_ZC1_MARKER+str_seconds
+        rcr_epoch=DELAY_MODEL_RCR_MARKER+str_seconds
+        rcm_epoch=DELAY_MODEL_RCM_MARKER+str_seconds
+        rcc_epoch=DELAY_MODEL_RCC_MARKER+str_seconds
+        ddd_epoch=DELAY_MODEL_DDD_MARKER+str_seconds
+        try:
+            rate_delay = [float(get_param_serial(params_delays,pair_st_so,rr0_epoch)),\
                   float(get_param_serial(params_delays,pair_st_so,rr1_epoch)),\
                   float(get_param_serial(params_delays,pair_st_so,rr2_epoch)),\
                   float(get_param_serial(params_delays,pair_st_so,rrr_epoch)),\
@@ -622,14 +625,23 @@ def get_rates_cache(seconds_fr_nearest,pair_st_so,params_delays,cache_rates=[]):
                   float(get_param_serial(params_delays,pair_st_so,rcm_epoch)),\
                   float(get_param_serial(params_delays,pair_st_so,rcc_epoch)),\
                   float(get_param_serial(params_delays,pair_st_so,ddd_epoch))]
-        
-        rel_epoch=DELAY_MODEL_REL_MARKER+str(seconds_fr_nearest)
+        except:
+            print(params_delays)
+            print(pair_st_so)
+            print(rr0_epoch)
+            print("==")
+            print("==")
+            print("==")
+            print("==")
+            print("==")
+            raise
+        rel_epoch=DELAY_MODEL_REL_MARKER+str_seconds
         delay = float(get_param_serial(params_delays,pair_st_so,rel_epoch))
         
-        f_epoch=DELAY_MODEL_REF_MARKER+str(seconds_fr_nearest)
+        f_epoch=DELAY_MODEL_REF_MARKER+str_seconds
         ref_delay=float(get_param_serial(params_delays,pair_st_so,f_epoch))
         
-        abs_epoch=DELAY_MODEL_ABS_MARKER+str(seconds_fr_nearest)
+        abs_epoch=DELAY_MODEL_ABS_MARKER+str_seconds
         abs_delay = float(get_param_serial(params_delays,pair_st_so,abs_epoch))
         
         #else:
@@ -651,9 +663,9 @@ def get_rates_cache(seconds_fr_nearest,pair_st_so,params_delays,cache_rates=[]):
     return(rates_out)
 
 
-
 #    [rates_out,delays_out] = get_rates_delays(seconds_fr_nearest,pair_st_so,params_delays,cache_rates)
 #    return(rates_out)
+
 
 def get_delay_cache(seconds_fr_nearest,pair_st_so,params_delays,cache_delays=[]):
     """
@@ -670,8 +682,8 @@ def get_delay_cache(seconds_fr_nearest,pair_st_so,params_delays,cache_delays=[])
             found=1
     if found is None:
         #[rates_out,delays_out] = get_rates_delays(seconds_fr_nearest,pair_st_so,params_delays,cache_rates)
-        
-        rel_epoch=DELAY_MODEL_REL_MARKER+str(seconds_fr_nearest)
+        sec = get_seconds_ini_str(seconds_fr_nearest)
+        rel_epoch=DELAY_MODEL_REL_MARKER+sec
         delay = float(get_param_serial(params_delays,pair_st_so,rel_epoch))
         
 

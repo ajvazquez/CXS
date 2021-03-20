@@ -303,7 +303,7 @@ if CX_IMPORT_CONST_MAPRED=="latest":
         from const_mapred import *        # CX output separators and field locations (!) Make sure it is the same as used in correlation.
     else:
         from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP, INDEX_NBINS_PCAL, INDEX_PCAL_FREQ, \
-            INDEX_CHANNEL_INDEX, INDEX_FS, INDEX_KEY_CHANNEL
+            INDEX_CHANNEL_INDEX, INDEX_FS, INDEX_KEY_CHANNEL, B64_VIS_PREFIX, META_LEN, SP_VIS_PREFIX, DP_VIS_PREFIX
 
 
 elif CX_IMPORT_CONST_MAPRED=="2016.08.04":
@@ -332,6 +332,7 @@ else:
     from config.lib_ini_files import get_param_serial, get_all_params_serial, get_val_vector, get_param_eq_vector,\
         serialize_config, serial_params_to_array
 
+import base64
 import numpy as np
 import struct
 import os
@@ -377,9 +378,28 @@ def split_line_correct_tab(line):
     except IndexError:
         print("IndexError splitting line")
         print(line_split)
-    return([meta,data])  
-    
-  
+    return([meta,data])
+
+
+def read_output_samples(data, meta_len=META_LEN):
+    """
+    Returns list of strings samples given the string with the data.
+    """
+    samples = data.split(' ')[meta_len:]
+    if samples[0].startswith(B64_VIS_PREFIX):
+        samples_b64 = samples[0][len(B64_VIS_PREFIX):]
+        if samples_b64.startswith(SP_VIS_PREFIX):
+            samples_b64 = samples_b64[len(SP_VIS_PREFIX):]
+            dtype = np.complex64
+        elif samples_b64.startswith(DP_VIS_PREFIX):
+            samples_b64 = samples_b64[len(DP_VIS_PREFIX):]
+            dtype = np.complex128
+        else:
+            raise Exception("Invalid header b64 encoding")
+        samples = np.fromstring(base64.b64decode(samples_b64),dtype=dtype)
+    else:
+        samples = np.asarray(samples).astype(complex)
+    return samples
 
 
 def read_line_cx(line,fft_size=-1):
@@ -439,8 +459,8 @@ def read_line_cx(line,fft_size=-1):
     if fft_size>0 and len(data.split(' ')[META_LEN:])<fft_size:
         datac=None
     else:
-        datac=np.asarray(data.split(' ')[META_LEN:]).astype(complex)
-    
+        samples = read_output_samples(data, META_LEN)
+
     header_data_split = data.split(' ')[:META_LEN]
     n_bins = int(header_data_split[INDEX_NBINS_PCAL])
     pcal_freq = int(float(header_data_split[INDEX_PCAL_FREQ])//1)
@@ -633,14 +653,16 @@ def show_line_cx(file_in,line_start,line_count,filter_line="px",v=1,path_src="")
                         #print(line.strip())
                         [meta,data] = split_line_correct_tab(line)
                         data_split=data.split(" ")
+                        samples = read_output_samples(data, len(list_meta))
                         if v:
                             print("Line id ".ljust(ljust_len)+str(line_counter))
                             print("Key: ".ljust(ljust_len)+meta)
                             for i in range(len(list_meta)):
                                 print((list_meta[i]+": ").ljust(ljust_len)+data_split[i])
-                            print("Num. visibilities: ".ljust(ljust_len)+str(len(data_split[len(list_meta):])))
+                            #print("Num. visibilities: ".ljust(ljust_len)+str(len(data_split[len(list_meta):])))
+                            print("Num. visibilities: ".ljust(ljust_len)+str(len(samples)))
                             print(" ")
-                        results.append([meta,np.array(list(map(complex,data_split[len(list_meta):])))])
+                        results.append([meta, samples])
                         line_count-=1
                 line_counter+=1
                 if line_count==0:
@@ -793,9 +815,9 @@ def plot_vis_cx(file_input,title_figure,mode_in="px",max_lines=-2,interval_start
             fig = plt.figure(index_plt)
             fig.clf()
             plt.subplot(121)
-            
-            yf=[complex(i) for i in vector.split(' ')[META_LEN:]]
-            
+
+            yf = read_output_samples(vector)
+
             freq_sample=(complex(vector.split(' ')[1])).real
             
             N=len(yf)

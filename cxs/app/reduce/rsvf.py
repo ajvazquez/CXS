@@ -81,7 +81,7 @@ else:
         INDEX_RATE_M_ONLY, INDEX_RATE_C_ONLY, INDEX_RATE_DIFF_FRAC, INDEX_NUM_SAMPLES, INDEX_FS,\
         INDEX_BITS_PER_SAMPLE, INDEX_FIRST_SAMPLE, INDEX_DATA_TYPE, INDEX_NBINS_PCAL, INDEX_PCAL_FREQ,\
         INDEX_CHANNEL_INDEX, INDEX_CHANNEL_FREQ, INDEX_ACC_TIME, INDEX_ENCODING, INDEX_SIDEBAND
-    from app.base.const_mapred import ENCODE_B64
+    from app.base.const_mapred import ENCODE_B64, ENCODE_B64_REDUCER_OUTPUT, B64_VIS_PREFIX, SP_VIS_PREFIX, DP_VIS_PREFIX
 
     from config.const_ini_files import C_INI_MEDIA_C_VQ, C_INI_MEDIA_C_NO
     from config.const_ini_files import C_INI_CR_WINDOW_SQUARE
@@ -314,7 +314,7 @@ def get_key_all_out(char_type,F_ind_s0,F_ind_s1,acc_str):
     """
     return("p"+char_type+FIELD_SEP+F_ind_s0+FIELD_SEP+F_ind_s1+FIELD_SEP+acc_str+FIELD_SEP)
 
-def get_str_r_out(current_key_pair_accu,count_acc,current_vector_split,current_block_first_sample,accu_prod_div):
+def get_str_r_out(current_key_pair_accu,count_acc,current_vector_split,current_block_first_sample,accu_prod_div, single_precision):
     """
     Get output string for reducer.
     
@@ -338,9 +338,17 @@ def get_str_r_out(current_key_pair_accu,count_acc,current_vector_split,current_b
     """
     current_vector_split_sub_print = current_vector_split[:(META_LEN-1)]
     current_vector_split_sub_print[INDEX_PCAL_FREQ] = str(0)
-    current_vector_split_sub_print[INDEX_NBINS_PCAL] = str(0)                    
+    current_vector_split_sub_print[INDEX_NBINS_PCAL] = str(0)
+
+    if ENCODE_B64_REDUCER_OUTPUT:
+        prefix = SP_VIS_PREFIX if single_precision else DP_VIS_PREFIX
+        samples = B64_VIS_PREFIX + prefix + base64.b64encode(accu_prod_div).decode("utf-8")
+    else:
+        samples = ' '.join(map(str, accu_prod_div))
+
     str_print = current_key_pair_accu+'sxa'+str(count_acc)+KEY_SEP+' '.join(current_vector_split_sub_print)+\
-          ' '+current_block_first_sample+' '+' '.join(map(str, accu_prod_div))
+          ' '+current_block_first_sample+' '+samples
+     #' '.join(map(str, accu_prod_div))
     return(str_print)
                         
 
@@ -403,7 +411,7 @@ def get_str_pcal_out_all(sp,acc_pcal,current_n_bins_pcal,count_acc_pcal,current_
 
 
 def get_lines_out_for_all(char_type,n_sp,F_ind,current_acc_str,count_acc,acc_mat,current_block_first_sample,current_vector_split,\
-                          acc_pcal,count_acc_pcal,scaling_pair="A.A"):
+                          acc_pcal,count_acc_pcal,scaling_pair="A.A", single_precision=False):
     """
     Get output lines for all results in accumulation matrix.
     
@@ -448,7 +456,7 @@ def get_lines_out_for_all(char_type,n_sp,F_ind,current_acc_str,count_acc,acc_mat
                     try:
                         new_key_pair_accu=get_key_all_out(char_type,F_ind[s0],F_ind[s1],current_acc_str)
                         str_print = get_str_r_out(new_key_pair_accu,count_acc,current_vector_split,\
-                                                  current_block_first_sample,acc_mat[s0,s1])
+                                                  current_block_first_sample,acc_mat[s0,s1], single_precision)
                     except TypeError:
                         str_print = "zR\tError getting output data for "+str(s0)+"/"+str(s1)+" in "+str(current_acc_str)
                     lines_out+=[str_print]
@@ -457,7 +465,7 @@ def get_lines_out_for_all(char_type,n_sp,F_ind,current_acc_str,count_acc,acc_mat
             for s1 in range(n_sp):
                 new_key_pair_accu=get_key_all_out(char_type,F_ind[s0],F_ind[s1],current_acc_str)
                 str_print = get_str_r_out(new_key_pair_accu,count_acc,current_vector_split,\
-                                              current_block_first_sample,acc_mat[s1])
+                                              current_block_first_sample,acc_mat[s1], single_precision)
                 lines_out+=[str_print]
         
         if acc_pcal!=[]:
@@ -925,7 +933,7 @@ def rsvf(codecs_serial,
                         #########
                         lines_out = get_lines_out_for_all(char_type,n_sp,last_F_ind,current_pairs,count_acc,acc_mat,\
                                                           current_block_first_sample,current_vector_split,acc_pcal,\
-                                                          count_acc_pcal,current_scaling_pair)
+                                                          count_acc_pcal,current_scaling_pair, SINGLE_PRECISION)
                         if lines_out!=[]:
                             for line_out in lines_out:
                                 if group_output:
@@ -1189,7 +1197,7 @@ def rsvf(codecs_serial,
 
                                 
                                 lines_out = get_lines_out_for_all(char_type,n_sp,last_F_ind,current_pairs,count_acc,acc_mat,\
-                                                                  current_block_first_sample,acc_pcal,count_acc_pcal,current_vector_split)
+                                                                  current_block_first_sample,acc_pcal,count_acc_pcal,current_vector_split, SINGLE_PRECISION)
                                 if lines_out!=[]:
                                     for line_out in lines_out:
                                         if group_output:
@@ -1224,7 +1232,7 @@ def rsvf(codecs_serial,
                             else:
                             
                                 accu_prod_div = normalize_mat(accu_prod,count_acc)
-                                str_print = get_str_r_out(current_key_pair_accu,count_acc,current_vector_split,current_block_first_sample,accu_prod_div)
+                                str_print = get_str_r_out(current_key_pair_accu,count_acc,current_vector_split,current_block_first_sample,accu_prod_div, SINGLE_PRECISION)
                                 if group_output:
                                     output.append(str_print)
                                 else:
@@ -1400,7 +1408,7 @@ def rsvf(codecs_serial,
                     #  Out
                     #########
                     lines_out = get_lines_out_for_all(char_type,n_sp,last_F_ind,current_pairs,count_acc,acc_mat,\
-                                                          current_block_first_sample,current_vector_split,acc_pcal,count_acc_pcal,current_scaling_pair)
+                                                          current_block_first_sample,current_vector_split,acc_pcal,count_acc_pcal,current_scaling_pair, SINGLE_PRECISION)
                     if lines_out!=[]:
                         for line_out in lines_out:
                             if group_output:
@@ -1441,7 +1449,7 @@ def rsvf(codecs_serial,
                 # TO DO: discontinued, untested
                 if count_acc>0:
                     accu_prod_div = normalize_mat(accu_prod,count_acc)
-                    str_print = get_str_r_out(current_key_pair_accu,count_acc,current_vector_split,current_block_first_sample,accu_prod_div)
+                    str_print = get_str_r_out(current_key_pair_accu,count_acc,current_vector_split,current_block_first_sample,accu_prod_div, SINGLE_PRECISION)
                 
                 else:
                     str_print = line

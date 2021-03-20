@@ -131,6 +131,12 @@ DATA_TYPE_LIST = ['r','c']
 #ENCODE_INT=0
 ENCODE_B64=1
 
+# Encode reducer output samples in base64
+ENCODE_B64_REDUCER_OUTPUT = 1
+B64_VIS_PREFIX = "b64_"
+SP_VIS_PREFIX = "sp_"
+DP_VIS_PREFIX = "dp_"
+
 # Padding for sample number in key (fixed length, padding with zeros for sorting)
 # This is to avoid requiring numerical sorting in Hadoop
 PAD_S=14

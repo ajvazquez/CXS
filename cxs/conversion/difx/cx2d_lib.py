@@ -396,7 +396,7 @@ def read_output_samples(data, meta_len=META_LEN):
             dtype = np.complex128
         else:
             raise Exception("Invalid header b64 encoding")
-        samples = np.fromstring(base64.b64decode(samples_b64),dtype=dtype)
+        samples = np.frombuffer(base64.b64decode(samples_b64),dtype=dtype)
     else:
         samples = np.asarray(samples).astype(complex)
     return samples

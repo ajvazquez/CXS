@@ -282,7 +282,7 @@ def decode_samples_b64(vector_split_samples,vector_split_encoding):
     """
     
     if (ENCODE_B64==1)and(vector_split_encoding==C_INI_MEDIA_C_NO):
-        return(np.fromstring(base64.b64decode(vector_split_samples),dtype=np.uint8))
+        return(np.frombuffer(base64.b64decode(vector_split_samples),dtype=np.uint8))
     else:
         return([])
 

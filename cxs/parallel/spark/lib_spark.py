@@ -7,6 +7,7 @@ export PYTHONPATH=$PYTHONPATH:`pwd`/cxs
 import io
 import time
 import findspark
+import uuid
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
 from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
@@ -54,8 +55,16 @@ class CXSworker(CXworker):
         return self.reducer(rdd[1])
 
     def write_output(self, data):
-        with open(self.out_file, "w") as f_out:
-            for x in data.collect():
+        new_file = self.out_dir + "/sub_"
+        file_id = uuid.uuid4().hex[:6]
+        data = [x for x in data]
+        try:
+            new_file = "{}_{}_{}.out".format(new_file, data[0].split(KEY_SEP)[0], file_id)
+        except:
+            new_file = "{}_{}.out".format(new_file, file_id)
+        with open(new_file, "w+") as f_out:
+            #for x in data.collect():
+            for x in data:
                 print(x, file=f_out)
 
     def run(self, sc):
@@ -77,7 +86,7 @@ class CXSworker(CXworker):
         self.print_partitions(data_sorted, "repartition")
 
         data_reduced = data_sorted.flatMap(lambda rdd:self.reduce_lines(rdd))
-        self.write_output(data_reduced)
+        data_reduced.foreachPartition(lambda rdd:self.write_output(rdd))
 
 
     # Debug

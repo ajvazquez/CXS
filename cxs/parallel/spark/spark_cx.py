@@ -1,6 +1,8 @@
 import time
 import os
+import glob
 from pathlib import Path
+import shutil
 from parallel.spark.lib_spark import CXSworker
 import argparse
 
@@ -11,17 +13,34 @@ DEFAULT_CONFIG = "/home/aj/work/cx_git/CorrelX/conf/cxs338.ini"
 start_time = time.time()
 
 
-def run_spark_task(config_file):
+def run_spark_task(config_file, keep=False):
     cxs = CXSworker(config_file=config_file)
 
     sc = cxs.start_spark(spark_config_pairs=cxs.config_gen.spark_config_pairs)
+
     cxs.run(sc)
-    cxs.stop_spark(sc)
 
-    end_time = time.time()
-    print("Elapsed: {}".format(end_time-start_time))
+    try:
+        if keep:
+            end_time = time.time()
+            print("Elapsed: {}".format(end_time - start_time))
+            keep_m = 60*keep
+            print("Keeping Spark session open for {} minutes".format(keep_m))
+            time.sleep(keep_m)
+    finally:
+        cxs.stop_spark(sc)
 
-    Path(cxs.out_file).touch()
+    if not keep:
+        end_time = time.time()
+        print("Elapsed: {}".format(end_time-start_time))
+
+    print("Merging output...")
+
+    with open(cxs.out_file, 'wb') as fod:
+        for f in glob.glob(cxs.out_dir+"/sub_*.out"):
+            with open(f, 'rb') as fd:
+                shutil.copyfileobj(fd, fod)
+    print("Done.")
 
 
 def run_checks(config_file):
@@ -41,8 +60,13 @@ def main():
                          dest="check", default=False, \
                          help="Check configuration (does not run correlation).")
 
+    cparser.add_argument('-k', action="store", type=int, \
+                         dest="keep", default=None, \
+                         help="Number of minutes to keep Spark session open.")
+
     args = cparser.parse_args()
     config_file = args.configuration_file
+    keep = args.keep
 
     error = None
     if not os.path.exists(config_file):
@@ -54,7 +78,7 @@ def main():
         error = "Check run"
 
     if not error:
-        run_spark_task(config_file)
+        run_spark_task(config_file, keep)
 
 
 if __name__ == '__main__':

@@ -48,7 +48,7 @@ class CXworker(object):
         num_channels = len(channels)
         s_duration = float(self.config_ini.signal_duration)
         acc_time = float(self.config_ini.accumulation_time)
-        num_accs = int(s_duration//acc_time)
+        num_accs = int(-(s_duration//-acc_time))
         num_partitions = num_accs * num_channels
         print("Partitions: {} (accs: {}, channels: {})".format(num_partitions, num_accs, num_channels))
         return [num_partitions, num_accs, num_channels]
@@ -61,6 +61,7 @@ class CXworker(object):
         out_sub_dir = "s" + time.strftime("%Y%m%d_%H%M%S")
         out_dir = self.config_gen.out_dir+out_sub_dir
         os.mkdir(out_dir)
+        self.out_dir = out_dir
         self.out_file = out_dir + "/{}_s0_v0.out".format(self.config_gen.out_prefix)
 
     def mapper(self, f_input, f_name):

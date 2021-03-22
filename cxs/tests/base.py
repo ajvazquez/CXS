@@ -133,7 +133,7 @@ class BaseTest(unittest.TestCase):
         return self.run_example(script=PATH_EXAMPLE_SPARK)
 
     def compare_results(self, file_a, file_b):
-        return get_error_indicator(file_a, file_b, force=False, path_src=PATH_SRC)
+        return get_error_indicator(file_a, file_b, force=False, path_src=PATH_SRC, verbose=self.VERBOSE)
 
     def check_result_legacy(self, result):
         return self.compare_results(REF_FILE_LEGACY, result)

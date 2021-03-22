@@ -467,8 +467,8 @@ def get_lines_out_for_all(char_type,n_sp,F_ind,current_acc_str,count_acc,acc_mat
                 str_print = get_str_r_out(new_key_pair_accu,count_acc,current_vector_split,\
                                               current_block_first_sample,acc_mat[s1], single_precision)
                 lines_out+=[str_print]
-        
-        if acc_pcal!=[]:
+
+        if hasattr(acc_pcal, "size") and acc_pcal.size > 0:
             current_n_bins_pcal=acc_pcal.shape[1]
             pcal_fft = window_and_fft(acc_pcal,current_n_bins_pcal,C_INI_CR_WINDOW_SQUARE,flatten_chunks=0)
             

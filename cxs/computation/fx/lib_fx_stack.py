@@ -37,6 +37,8 @@ CorrelX FX correlation and samples-stack routines.
 from __future__ import print_function,division
 import scipy.fftpack as scfft
 import numpy as np
+from copy import copy
+
 import os
 
 if os.environ.get("is_legacy"):
@@ -1855,14 +1857,14 @@ def compute_fx_for_all(F1_partial,F_ind_partial,F1,fft_size,windowing,acc_mat,co
             if pre_pcal_rem is None:
                 pre_pcal=np.array([])
             else:
-                pre_pcal=np.copy(pre_pcal_rem)
+                pre_pcal = copy(pre_pcal_rem)
         
         if reset_inputs:
             if F1_partial_rem is None:
                 F1_partial=np.array([])
                 #F_ind_partial=[]
             else:
-                F1_partial=np.copy(F1_partial_rem)
+                F1_partial = copy(F1_partial_rem)
 
     if normalize_after_compute:
         if acc_mat is not None:

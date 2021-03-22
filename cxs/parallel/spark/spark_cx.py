@@ -27,6 +27,8 @@ def run_spark_task(config_file, keep=False):
             keep_m = 60*keep
             print("Keeping Spark session open for {} minutes".format(keep_m))
             time.sleep(keep_m)
+    except KeyboardInterrupt:
+        print("Exiting...")
     finally:
         cxs.stop_spark(sc)
 

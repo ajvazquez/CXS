@@ -769,8 +769,119 @@ def plot_signal_from_packets(filename,bw,only_station=-1,packet_limit=-1,same_fi
             plot_fft_set(dequant_signals,freq_sample,"Signal channels (nchannels = " + str(tot_channels) + ") (FFT)",overlay=1)
 
 
-#if __name__ == '__main__':
-#   main()    
+def main():
+
+    cparser = argparse.ArgumentParser(description='VDIF generator')
+
+    default = 2e7
+    cparser.add_argument('--bw', action="store",
+                         dest="bw", default=default, type=float,
+                         help="Bandwidth (default: {} Hz).".format(default))
+
+    default = 1000
+    cparser.add_argument('--bytes-per-frame', action="store",
+                         dest="Bpf", default=default, type=int,
+                         help="Bytes per frame (default: {})".format(default))
+
+    default = 1
+    cparser.add_argument('--log-2-channels', action="store",
+                         dest="log_2_channels", default=default, type=int,
+                         help="Log2(channels) (default: {})".format(default))
+
+    default = 1
+    cparser.add_argument('--threads', action="store",
+                         dest="num_threads", default=default, type=int,
+                         help="NUmber of threads (default: {})".format(default))
+
+    default = False
+    cparser.add_argument('--threaded-channels', action="store_true",
+                         dest="threaded_channels", default=default,
+                         help="Threaded channels (default: {}).".format(default))
+
+    default = 2
+    cparser.add_argument('--bps', action="store",
+                         dest="bps", default=default, type=int,
+                         help="Bits per second (default: {}).".format(default))
+
+    default = "2015-11-24T18:57:35"
+    cparser.add_argument('--date', action="store",
+                         dest="date", default=default, type=str,
+                         help="Date (default: {})".format(default))
+
+    default = 20
+    cparser.add_argument('--seconds', action="store",
+                         dest="seconds_duration", default=default, type=int,
+                         help="Total seconds (default: {}).".format(default))
+
+    default = False
+    cparser.add_argument('--complex', action="store_true",
+                         dest="complex", default=default,
+                         help="Complex data (default: {}).".format(default))
+
+    default = 256
+    cparser.add_argument('--taps', action="store",
+                         dest="taps", default=default, type=int,
+                         help="Number of taps in filterbank (default: {}).".format(default))
+
+    default = "./"
+    cparser.add_argument('--dir', action="store",
+                         dest="dir", default=default, type=str,
+                         help="Output directory (default: {})".format(default))
+
+    default = "test_"
+    cparser.add_argument('--prefix', action="store",
+                         dest="prefix", default=default, type=str,
+                         help="File prefix (default: {})".format(default))
+
+    cparser.add_argument('--verbose', action="store_true",
+                         dest="verbose", default=False,
+                         help="Verbose.")
+
+    args = cparser.parse_args()
+
+    error = None
+    try:
+        date = args.date
+        for delimiter in ["-", "T"]:
+            date = date.replace(delimiter, ":")
+        date = date.split(":")
+        if len(date) != 6:
+            raise Exception("Invalid time format")
+        date = list(map(int, date))
+    except:
+        error = "Invalid time format"
+
+    if not error:
+        bw = args.bw
+        if not complex:
+            bw = args.fs / 2
+        bw = bw * (2 ** args.log_2_channels)
+
+        snr = 1e2
+
+        generate_vdif(tot_stations=1,
+                      bw_in=bw,
+                      bytes_payload_per_frame=args.Bpf,
+                      bits_quant=args.bps, #4,
+                      snr_in=snr,
+                      sines_f_in=[],
+                      sines_amp_in=[],
+                      prefix=args.prefix,
+                      signal_limits=[0, 0],
+                      log_2_channels=args.log_2_channels,
+                      num_threads=args.num_threads,
+                      threaded_channels=args.threaded_channels,
+                      num_taps_filterbank=args.taps,
+                      date_vector=date,
+                      seconds_duration=args.seconds_duration,
+                      v=args.verbose,
+                      force_complex=args.complex,
+                      data_dir=args.dir,
+                      )
+
+
+if __name__ == '__main__':
+   main()
 
 # <codecell>
 

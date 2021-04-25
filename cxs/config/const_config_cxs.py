@@ -21,6 +21,7 @@ C_CONF_EXP_MEDIA_SUB_PREFIX =   'Output sub-folder prefix'
 
 
 C_CONF_FILES =                  "Files"
+C_CONF_FILES_SPARK_HOME_DIR =   'Spark home'
 C_CONF_FILES_OUT_DIR =          'Output directory'
 C_CONF_FILES_PREFIX_OUTPUT =    'Prefix for output'
 
@@ -49,7 +50,8 @@ class ConfigCXS(object):
                  single_precision,
                  out_dir,
                  out_prefix,
-                 spark_config_pairs
+                 spark_config_pairs,
+                 spark_home
                  ):
 
         self.fft_at_mapper = fft_at_mapper
@@ -72,3 +74,4 @@ class ConfigCXS(object):
         self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.spark_config_pairs = spark_config_pairs
+        self.spark_home = spark_home

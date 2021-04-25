@@ -7,7 +7,7 @@ import os
 if os.environ.get("is_legacy"):
     from const_config import *
 else:
-    from const_config_cxs import *
+    from config.const_config_cxs import *
 
 try:
     import configparser
@@ -126,6 +126,7 @@ def get_configuration(file_log, config_file, v=0):
     #DATA_DIR = None
 
     # Files
+    SPARK_HOME_DIR =     config.get(       C_CONF_FILES, C_CONF_FILES_SPARK_HOME_DIR)
     OUTPUT_DIR =         config.get(       C_CONF_FILES, C_CONF_FILES_OUT_DIR)
     if OUTPUT_DIR[-1]!="/":
         OUTPUT_DIR+=("/")
@@ -177,6 +178,7 @@ def get_configuration(file_log, config_file, v=0):
         single_precision=SINGLE_PRECISION,
         out_dir=OUTPUT_DIR,
         out_prefix=PREFIX_OUTPUT,
-        spark_config_pairs=spark_config_pairs
+        spark_config_pairs=spark_config_pairs,
+        spark_home=SPARK_HOME_DIR
     )
     return config

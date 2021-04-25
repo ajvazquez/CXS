@@ -7,16 +7,12 @@ from parallel.spark.lib_spark import CXSworker
 import argparse
 
 
-DEFAULT_CONFIG = "/home/aj/work/cx_git/CorrelX/conf/cxs338.ini"
-
-
-start_time = time.time()
-
-
 def run_spark_task(config_file, keep=False):
+    start_time = time.time()
     cxs = CXSworker(config_file=config_file)
 
-    sc = cxs.start_spark(spark_config_pairs=cxs.config_gen.spark_config_pairs)
+    sc = cxs.start_spark(spark_config_pairs=cxs.config_gen.spark_config_pairs,
+                         spark_home=cxs.config_gen.spark_home)
 
     cxs.run(sc)
 
@@ -55,7 +51,7 @@ def main():
     cparser = argparse.ArgumentParser(description='CXS338')
 
     cparser.add_argument('-c', action="store", \
-                         dest="configuration_file", default=DEFAULT_CONFIG, \
+                         dest="configuration_file", required=True, \
                          help="Specify a configuration file.")
 
     cparser.add_argument('--check', action="store_true", \

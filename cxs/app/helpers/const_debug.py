@@ -33,8 +33,11 @@
 #History:
 #initial version: 2016.11 ajva
 #MIT Haystack Observatory
-
-from const_mapred import *
+import os
+if os.environ.get("is_legacy"):
+    from const_mapred import *
+else:
+    from app.base.const_mapred import *
 
 
 ###########################################

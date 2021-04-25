@@ -43,6 +43,8 @@ Reactivate environment:
 source venv3/bin/activate
 ```
 
+
+
 ## Basic Correlation
 
 ### Pipeline
@@ -67,6 +69,29 @@ CXPL27 (pipeline)     8 s    7 s
 CXPL38 (pipeline)     8 s    8 s
 CXH227 (hadoop)     247 s   64 s       (24.6 hdfs in, 2.6 hdfs out, 36.6 hadoop-1s-8v)
 CXS338 (spark)       16 s   16 s
+```
+
+## Deployment
+
+### Packaging
+
+Increase version in ```version.txt``` and then run:
+```
+python setup.py sdist
+```
+
+### Installation
+
+```
+virtualenv -p python3 venv3
+source venv3/bin/activate
+pip install pip install dist/cxs338-0.0.1.tar.gz
+```
+
+### Execution
+
+```
+cxs -c <path-to-cxs338.ini>
 ```
 
 

@@ -38,7 +38,11 @@ from __future__ import print_function
 import numpy as np
 
 # Quantization levels
-from const_quant import *
+import os
+if os.environ.get("is_legacy"):
+    from const_quant import *
+else:
+    from computation.quantization.const_quant import *
 
 
 def compute_range_bits(bits_per_sample):

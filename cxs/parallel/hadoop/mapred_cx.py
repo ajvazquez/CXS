@@ -175,7 +175,7 @@ def print_header(header="Header",v=0,file_log=sys.stdout):
 
 
 
-if __name__ == '__main__':
+def main():
     
     # Network stats
     NETWORK_STATS=0
@@ -761,6 +761,11 @@ if __name__ == '__main__':
         
         # Delete temporary files
         os.system("rm " + TEMP_LOG)
+
+
+if __name__ == '__main__':
+    main()
+
 
 # <codecell>
 

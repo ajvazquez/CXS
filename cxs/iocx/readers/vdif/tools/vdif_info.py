@@ -45,7 +45,7 @@ else:
 def main():
 
     cparser = argparse.ArgumentParser(description='VDIF info')
-    cparser.add_argument('file_vdif',nargs='?',
+    cparser.add_argument('file_vdif',
                          help="VDIF file.")
     cparser.add_argument('-n', action="store",\
                          dest="limit_frames",default="-1",\

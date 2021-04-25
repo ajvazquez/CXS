@@ -37,8 +37,8 @@ Routines for displaying debug information.
 from __future__ import print_function
 import os
 
-dirs = os.path.dirname(os.path.abspath(__file__)).split("/")
-if dirs[-1] == "src" and dirs[-2] == "CorrelX":
+import os
+if os.environ.get("is_legacy"):
     # legacy
     from const_debug import *
 else:

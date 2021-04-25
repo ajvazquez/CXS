@@ -5,6 +5,7 @@ export SPARK_HOME=/home/aj/work/tfm/spark-3.0.1-bin-hadoop2.7
 export PYTHONPATH=$PYTHONPATH:`pwd`/cxs
 """
 import io
+import os
 import time
 import findspark
 import uuid
@@ -13,13 +14,17 @@ from pyspark import SparkConf
 from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
 from app.cx38 import CXworker
 
+SPARK_HOME = "SPARK_HOME"
+
 
 class CXSworker(CXworker):
 
     debug_spark_partitions = False
 
     @staticmethod
-    def start_spark(app_name=None, spark_config_pairs=None):
+    def start_spark(app_name=None, spark_config_pairs=None, spark_home=None):
+        if spark_home:
+            os.environ[SPARK_HOME] = spark_home
         if app_name is None:
             app_name = "s" + time.strftime("%Y%m%d_%H%M%S")
         findspark.init()
@@ -44,6 +49,7 @@ class CXSworker(CXworker):
 
     def read_input_files(self, sc):
         return sc.binaryFiles(self.config_gen.data_dir)
+        #return sc.binaryFiles(self.config_gen.data_dir, minPartitions=100)
 
     def process_file(self, rdd):
        f_name = rdd[0].split("/")[-1]

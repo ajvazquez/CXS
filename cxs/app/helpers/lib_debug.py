@@ -43,7 +43,7 @@ if os.environ.get("is_legacy"):
     from const_debug import *
 else:
     # cxs
-    from app.base.const_mapred import KEY_SEP
+    from cxs.app.base.const_mapred import KEY_SEP
 
 
 ###########################################

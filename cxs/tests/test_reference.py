@@ -1,4 +1,4 @@
-from tests.base import BaseTest, REF_FILE_PY2_LEGACY, REF_FILE_PY3_LEGACY, REF_FILE_PY2_NUMERIC, REF_FILE_PY3_NUMERIC
+from cxs.tests.base import BaseTest, REF_FILE_PY2_LEGACY, REF_FILE_PY3_LEGACY, REF_FILE_PY2_NUMERIC, REF_FILE_PY3_NUMERIC
 
 
 class TestReference(BaseTest):

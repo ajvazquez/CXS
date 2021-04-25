@@ -302,7 +302,7 @@ if CX_IMPORT_CONST_MAPRED=="latest":
     if os.environ.get("is_legacy"):
         from const_mapred import *        # CX output separators and field locations (!) Make sure it is the same as used in correlation.
     else:
-        from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP, INDEX_NBINS_PCAL, INDEX_PCAL_FREQ, \
+        from cxs.app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP, INDEX_NBINS_PCAL, INDEX_PCAL_FREQ, \
             INDEX_CHANNEL_INDEX, INDEX_FS, INDEX_KEY_CHANNEL, B64_VIS_PREFIX, META_LEN, SP_VIS_PREFIX, DP_VIS_PREFIX
 
 
@@ -319,7 +319,7 @@ if os.environ.get("is_legacy"):
     from lib_ini_files import *          # CX ini files
     from lib_acc_comp import *           # CX accumulation periods
 else:
-    from config.const_ini_files import C_INI_MEDIA_FREQUENCIES, C_INI_MEDIA_BANDWIDTHS, C_INI_CR_S_COMP, C_INI_CR_FFT,\
+    from cxs.config.const_ini_files import C_INI_MEDIA_FREQUENCIES, C_INI_MEDIA_BANDWIDTHS, C_INI_CR_S_COMP, C_INI_CR_FFT,\
         C_INI_MEDIA_SIDEBANDS, C_INI_MEDIA_CHANNELS, C_INI_MEDIA_ZOOM_POST, C_INI_MEDIA_ZP_BW, C_INI_MEDIA_ZP_FREQ, \
         C_INI_MEDIA_LIST, C_INI_MEDIA_S_FILES, C_INI_MEDIA_S_POLARIZATIONS, C_INI_CR_S_TIMES, C_INI_CR_MJD, \
         C_INI_CR_START, C_INI_CR_ACC, C_INI_MEDIA_S_CHANNELS, INI_SUB, INI_HL, INI_HF, \
@@ -329,7 +329,7 @@ else:
         C_INI_MEDIA_ZB, C_INI_MEDIA_ZF, C_INI_MEDIA_STATION, C_INI_MEDIA_FRAMEBYTES, C_INI_MEDIA_FREQ_SAMPLE, \
         C_INI_MEDIA_FORMAT, C_INI_MEDIA_F_VDIF, C_INI_MEDIA_VERSION, C_INI_MEDIA_F_PCAL, C_INI_MEDIA_O_PCAL, \
         C_INI_MEDIA_V_CUSTOM
-    from config.lib_ini_files import get_param_serial, get_all_params_serial, get_val_vector, get_param_eq_vector,\
+    from cxs.config.lib_ini_files import get_param_serial, get_all_params_serial, get_val_vector, get_param_eq_vector,\
         serialize_config, serial_params_to_array
 
 import base64

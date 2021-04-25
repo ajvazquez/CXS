@@ -7,7 +7,7 @@ import os
 if os.environ.get("is_legacy"):
     from const_config import *
 else:
-    from config.const_config_cxs import *
+    from cxs.config.const_config_cxs import *
 
 try:
     import configparser

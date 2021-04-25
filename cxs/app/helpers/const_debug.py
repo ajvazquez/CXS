@@ -37,7 +37,7 @@ import os
 if os.environ.get("is_legacy"):
     from const_mapred import *
 else:
-    from app.base.const_mapred import *
+    from cxs.app.base.const_mapred import *
 
 
 ###########################################

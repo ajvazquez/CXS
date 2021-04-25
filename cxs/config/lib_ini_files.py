@@ -64,7 +64,7 @@ import os
 if os.environ.get("is_legacy"):
     from const_ini_files import *
 else:
-    from config.const_ini_files import *
+    from cxs.config.const_ini_files import *
 
 
 try:

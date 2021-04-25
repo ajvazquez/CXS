@@ -5,7 +5,6 @@ site_packages_path = sysconfig.get_python_lib()
 
 VERSION = "version.txt"
 REQUIREMENTS = "requirements.pkg.txt"
-PATH = "cxs.pth"
 
 
 def get_path(fi):
@@ -32,7 +31,6 @@ setup(
     author="AJ",
     author_email="ajvazquez.teleco@gmail.com",
     #url
-    data_files=[(site_packages_path, [PATH])],
     install_requires=reqs,
     packages=[x for x in find_packages(exclude=exclude) if x.startswith("cxs")],
     entry_points={

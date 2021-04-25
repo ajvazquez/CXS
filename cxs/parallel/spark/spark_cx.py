@@ -3,8 +3,8 @@ import os
 import glob
 from pathlib import Path
 import shutil
-from parallel.spark.lib_spark import CXSworker
 import argparse
+from cxs.parallel.spark.lib_spark import CXSworker
 
 
 def run_spark_task(config_file, keep=False):

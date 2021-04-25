@@ -2,13 +2,13 @@ import time
 import os
 # legacy
 #from lib_config import get_configuration
-from config.lib_config_cxs import get_configuration
-from config.lib_ini_exper import process_ini_files
-from config.lib_ini_files import get_all_values_serial, C_INI_MEDIA_CHANNELS, \
+from cxs.config.lib_config_cxs import get_configuration
+from cxs.config.lib_ini_exper import process_ini_files
+from cxs.config.lib_ini_files import get_all_values_serial, C_INI_MEDIA_CHANNELS, \
     serial_params_to_array, INI_VEC
-from app.map.msvf import fun_mapper
-from app.reduce.rsvf import fun_reducer
-from app.base.const_mapred import KEY_SEP
+from cxs.app.map.msvf import fun_mapper
+from cxs.app.reduce.rsvf import fun_reducer
+from cxs.app.base.const_mapred import KEY_SEP
 
 
 class CXworker(object):

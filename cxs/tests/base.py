@@ -5,7 +5,7 @@ import sys
 import io
 import time
 
-from conversion.difx.cx2d_lib import get_error_indicator
+from cxs.conversion.difx.cx2d_lib import get_error_indicator
 
 PY3 = sys.version_info[0] == 3
 

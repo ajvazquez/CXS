@@ -92,37 +92,37 @@ if os.environ.get("is_legacy"):
     from lib_debug import *
 else:
     # cxs
-    from app.helpers.const_debug import VERBOSE_MAPPER_IO, DEBUG_ALIGN, SHOW_ERRORS, SILENT_OUTPUT
-    from app.helpers.lib_debug import print_debug_m_align_header, print_debug_m_align_no_end, print_sup_frame,\
+    from cxs.app.helpers.const_debug import VERBOSE_MAPPER_IO, DEBUG_ALIGN, SHOW_ERRORS, SILENT_OUTPUT
+    from cxs.app.helpers.lib_debug import print_debug_m_align_header, print_debug_m_align_no_end, print_sup_frame,\
         print_debug_m_align_last
 
     # mapred
-    from app.base.const_mapred import KEY_SEP, SF_SEP, FIELD_SEP, MAP_INPUT_FILE, PAD_S, USE_BITARRAYS
-    from app.base.const_mapred import C_M_READ_ERR_HEADER_NONE, C_M_READ_SUCCESS, C_M_READ_ERR_NO_SAMPLES,\
+    from cxs.app.base.const_mapred import KEY_SEP, SF_SEP, FIELD_SEP, MAP_INPUT_FILE, PAD_S, USE_BITARRAYS
+    from cxs.app.base.const_mapred import C_M_READ_ERR_HEADER_NONE, C_M_READ_SUCCESS, C_M_READ_ERR_NO_SAMPLES,\
         C_M_READ_ERR_DELAY_ABS, C_M_READ_ERR_DELAY_SHIFT
-    from app.base.const_mapred import DATA_TYPE_LIST, ENCODE_B64
+    from cxs.app.base.const_mapred import DATA_TYPE_LIST, ENCODE_B64
 
     # io
-    from iocx.readers.vdif import lib_vdif
+    from cxs.iocx.readers.vdif import lib_vdif
 
     # config
-    from config.const_ini_files import C_INI_MEDIA_F_VDIF, C_INI_MEDIA_V_CUSTOM, C_INI_MEDIA_C_NO, \
+    from cxs.config.const_ini_files import C_INI_MEDIA_F_VDIF, C_INI_MEDIA_V_CUSTOM, C_INI_MEDIA_C_NO, \
         C_INI_MEDIA_FREQ_SAMPLE, C_INI_ST_ID, C_INI_MEDIA_F_PCAL, C_INI_MEDIA_O_PCAL
-    from config.lib_ini_files import find_nearest_seconds, get_rates_cache, get_delay_cache, \
+    from cxs.config.lib_ini_files import find_nearest_seconds, get_rates_cache, get_delay_cache, \
         get_param_serial, serialize_config, serial_params_to_array, get_all_params_serial, extract_data_media
-    from config.lib_ini_files import get_vector_delay_ref
-    from config.lib_ini_files import get_pair_st_so
+    from cxs.config.lib_ini_files import get_vector_delay_ref
+    from cxs.config.lib_ini_files import get_pair_st_so
 
     # computation
-    from computation.base.const_performance import NUM_FRAMES_PER_LINE
-    from computation.acc_periods.lib_acc_comp import get_tot_acc_blocks, get_acc_float, get_list_acc_frontiers,\
+    from cxs.computation.base.const_performance import NUM_FRAMES_PER_LINE
+    from cxs.computation.acc_periods.lib_acc_comp import get_tot_acc_blocks, get_acc_float, get_list_acc_frontiers,\
         adjust_seconds_fr, get_acc_block_for_time, get_frame_acc
-    from computation.delay.lib_delay_model import get_delay_shift_frac
-    from computation.quantization.lib_quant import group_pairs_complex, simple_dequantizer
-    from computation.pcal.lib_pcal import get_pcal_ind
+    from cxs.computation.delay.lib_delay_model import get_delay_shift_frac
+    from cxs.computation.quantization.lib_quant import group_pairs_complex, simple_dequantizer
+    from cxs.computation.pcal.lib_pcal import get_pcal_ind
 
     # fix
-    from app.helpers.lib_vq import C_INI_MEDIA_C_CODECS, encode_vq, get_codebook_from_serial
+    from cxs.app.helpers.lib_vq import C_INI_MEDIA_C_CODECS, encode_vq, get_codebook_from_serial
 
 
 

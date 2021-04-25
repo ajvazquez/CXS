@@ -70,29 +70,29 @@ if os.environ.get("is_legacy"):
     from const_performance import *
     from const_ini_files import *
 else:
-    from app.helpers.const_debug import BYPASS_REDUCER, DEBUG_GENERAL_R, DEBUG_DELAYS, DEBUG_HSTACK, DEBUG_FRAC_OVER
-    from app.helpers.lib_debug import print_debug_r_delays_header, print_debug_r_hstack_header,\
+    from cxs.app.helpers.const_debug import BYPASS_REDUCER, DEBUG_GENERAL_R, DEBUG_DELAYS, DEBUG_HSTACK, DEBUG_FRAC_OVER
+    from cxs.app.helpers.lib_debug import print_debug_r_delays_header, print_debug_r_hstack_header,\
         print_debug_r_frac_over_header, print_key
 
-    from app.base.const_mapred import FIELD_SEP, KEY_SEP, SF_SEP, META_LEN
-    from app.base.const_mapred import INDEX_SHIFT_DELAY, INDEX_FRAC_DELAY, INDEX_ABS_DELAY,\
+    from cxs.app.base.const_mapred import FIELD_SEP, KEY_SEP, SF_SEP, META_LEN
+    from cxs.app.base.const_mapred import INDEX_SHIFT_DELAY, INDEX_FRAC_DELAY, INDEX_ABS_DELAY,\
         INDEX_RATE_DELAY_0, INDEX_RATE_DELAY_1, INDEX_RATE_DELAY_2, INDEX_RATE_DELAY_REF,\
         INDEX_RATE_CLOCK_0, INDEX_RATE_CLOCK_1, INDEX_RATE_ZC_0, INDEX_RATE_ZC_1, INDEX_RATE_CLOCK_REF,\
         INDEX_RATE_M_ONLY, INDEX_RATE_C_ONLY, INDEX_RATE_DIFF_FRAC, INDEX_NUM_SAMPLES, INDEX_FS,\
         INDEX_BITS_PER_SAMPLE, INDEX_FIRST_SAMPLE, INDEX_DATA_TYPE, INDEX_NBINS_PCAL, INDEX_PCAL_FREQ,\
         INDEX_CHANNEL_INDEX, INDEX_CHANNEL_FREQ, INDEX_ACC_TIME, INDEX_ENCODING, INDEX_SIDEBAND
-    from app.base.const_mapred import ENCODE_B64, ENCODE_B64_REDUCER_OUTPUT, B64_VIS_PREFIX, SP_VIS_PREFIX, DP_VIS_PREFIX
+    from cxs.app.base.const_mapred import ENCODE_B64, ENCODE_B64_REDUCER_OUTPUT, B64_VIS_PREFIX, SP_VIS_PREFIX, DP_VIS_PREFIX
 
-    from config.const_ini_files import C_INI_MEDIA_C_VQ, C_INI_MEDIA_C_NO
-    from config.const_ini_files import C_INI_CR_WINDOW_SQUARE
+    from cxs.config.const_ini_files import C_INI_MEDIA_C_VQ, C_INI_MEDIA_C_NO
+    from cxs.config.const_ini_files import C_INI_CR_WINDOW_SQUARE
 
-    from computation.base.const_performance import COMPUTE_FOR_SUB_ACC_PERIOD
-    from computation.quantization.lib_quant import get_samples
-    from computation.fx.lib_fx_stack import window_and_fft, compute_fx_for_all, normalize_mat, multiply_accumulate
-    from computation.pcal.lib_pcal import normalize_pcal, adjust_shift_acc_pcal, reshape_pcal, accumulate_pcal
+    from cxs.computation.base.const_performance import COMPUTE_FOR_SUB_ACC_PERIOD
+    from cxs.computation.quantization.lib_quant import get_samples
+    from cxs.computation.fx.lib_fx_stack import window_and_fft, compute_fx_for_all, normalize_mat, multiply_accumulate
+    from cxs.computation.pcal.lib_pcal import normalize_pcal, adjust_shift_acc_pcal, reshape_pcal, accumulate_pcal
 
     # fix
-    from app.helpers.lib_vq import get_vq_decoded_samples, dictc01bit, v1_quant, v2_quant
+    from cxs.app.helpers.lib_vq import get_vq_decoded_samples, dictc01bit, v1_quant, v2_quant
 
 # -Debugging-
 #    By default: 0

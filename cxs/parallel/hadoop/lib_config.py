@@ -44,8 +44,8 @@ if os.environ.get("is_legacy"):
     from const_config import *
     from const_hadoop import *
 else:
-    from parallel.hadoop.const_config import *
-    from parallel.hadoop.const_hadoop import *
+    from cxs.parallel.hadoop.const_config import *
+    from cxs.parallel.hadoop.const_hadoop import *
 
 try:
     import configparser

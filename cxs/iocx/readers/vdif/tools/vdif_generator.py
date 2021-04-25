@@ -60,11 +60,11 @@ if os.environ.get("is_legacy"):
     from lib_channelized_signals import *
     from lib_quant import *
 else:
-    from iocx.readers.vdif.lib_vdif import HEADER_VDIF_WORDS, WORD_SIZE
-    from iocx.readers.vdif.lib_vdif import vdif_epoch_seconds_to_epoch_seconds_datetime, date_to_vdif, create_header_vdif,\
+    from cxs.iocx.readers.vdif.lib_vdif import HEADER_VDIF_WORDS, WORD_SIZE
+    from cxs.iocx.readers.vdif.lib_vdif import vdif_epoch_seconds_to_epoch_seconds_datetime, date_to_vdif, create_header_vdif,\
         write_words_to_file, write_samples, read_vdif_frame
 
-    from computation.quantization.lib_quant import simple_quantizer, simple_dequantizer
+    from cxs.computation.quantization.lib_quant import simple_quantizer, simple_dequantizer
 
   
     

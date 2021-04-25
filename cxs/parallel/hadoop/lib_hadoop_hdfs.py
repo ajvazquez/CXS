@@ -44,8 +44,8 @@ if os.environ.get("is_legacy"):
     from lib_vdif import get_vdif_stats
     from const_hadoop import *
 else:
-    from iocx.readers.vdif.lib_vdif import get_vdif_stats
-    from parallel.hadoop.const_hadoop import *
+    from cxs.iocx.readers.vdif.lib_vdif import get_vdif_stats
+    from cxs.parallel.hadoop.const_hadoop import *
 
 
 

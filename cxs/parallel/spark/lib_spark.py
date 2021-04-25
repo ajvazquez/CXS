@@ -11,8 +11,8 @@ import findspark
 import uuid
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
-from app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
-from app.cx38 import CXworker
+from cxs.app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
+from cxs.app.cx38 import CXworker
 
 SPARK_HOME = "SPARK_HOME"
 
@@ -140,8 +140,8 @@ class CXSworker(CXworker):
         # TODO: refactor
         import os
         import glob
-        from config.lib_ini_files import get_val_vector, C_INI_MEDIA_S_FILES, C_INI_MEDIA_LIST, serial_params_to_array, extract_data_media
-        from iocx.readers.vdif.lib_vdif import get_vdif_stats
+        from cxs.config.lib_ini_files import get_val_vector, C_INI_MEDIA_S_FILES, C_INI_MEDIA_LIST, serial_params_to_array, extract_data_media
+        from cxs.iocx.readers.vdif.lib_vdif import get_vdif_stats
 
         params_media=serial_params_to_array(self.config_ini.media_serial_str)
         data_dir = self.config_gen.data_dir

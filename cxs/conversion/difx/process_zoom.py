@@ -39,7 +39,7 @@ import os
 if os.environ.get("is_legacy"):
     from cx2d_lib import *
 else:
-    from conversion.difx.cx2d_lib import process_zoom_band
+    from cxs.conversion.difx.cx2d_lib import process_zoom_band
 
 
 def main():

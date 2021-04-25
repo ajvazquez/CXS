@@ -39,7 +39,7 @@ import os
 if os.environ.get("is_legacy"):
     import lib_vdif
 else:
-    from iocx.readers.vdif import lib_vdif
+    from cxs.iocx.readers.vdif import lib_vdif
 
 
 def main():

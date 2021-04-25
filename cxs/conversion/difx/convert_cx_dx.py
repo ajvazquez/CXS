@@ -61,7 +61,7 @@ import os
 if os.environ.get("is_legacy"):
     from cx2d_lib import *
 else:
-    from conversion.difx.cx2d_lib import convert_cx2d
+    from cxs.conversion.difx.cx2d_lib import convert_cx2d
 
 
 def main():

@@ -49,17 +49,17 @@ if os.environ.get("is_legacy"):
     import lib_vdif
     import lib_acc_comp
 else:
-    from config.const_ini_files import C_INI_MEDIA_STATION, C_INI_CR_S_ELEMENTS, C_INI_CR_STATIONS, C_INI_CR_S_COMP, \
+    from cxs.config.const_ini_files import C_INI_MEDIA_STATION, C_INI_CR_S_ELEMENTS, C_INI_CR_STATIONS, C_INI_CR_S_COMP, \
         C_INI_CR_FFT, C_INI_CR_WINDOW, C_INI_CR_MJD, C_INI_CR_S_TIMES, C_INI_CR_ACC, C_INI_CR_START, C_INI_CR_DURATION,\
         C_INI_CR_PC, C_INI_CR_AUTO_ST, C_INI_MEDIA_S_FILES, C_INI_MEDIA_LIST, C_INI_MEDIA_CHANNELS, C_INI_MEDIA_POLARIZATIONS,\
         C_INI_CR_CROSS_POL, C_INI_ST_ID, C_INI_CR_M_FILE, C_INI_CR_M_SIMPLE
-    from config.const_ini_files import ConfigIni
-    from config.lib_ini_files import serialize_config, serial_params_to_array, get_all_values_serial,\
+    from cxs.config.const_ini_files import ConfigIni
+    from cxs.config.lib_ini_files import serialize_config, serial_params_to_array, get_all_values_serial,\
         get_param_serial, get_val_vector, get_param_eq_vector
-    from app.helpers.lib_vq import get_group_of_serialized_codebooks_noencoding, v_codecs, v_bits_sample
-    from computation.acc_periods import lib_acc_comp
-    from computation.delay import lib_delay_model
-    from iocx.readers.vdif import lib_vdif
+    from cxs.app.helpers.lib_vq import get_group_of_serialized_codebooks_noencoding, v_codecs, v_bits_sample
+    from cxs.computation.acc_periods import lib_acc_comp
+    from cxs.computation.delay import lib_delay_model
+    from cxs.iocx.readers.vdif import lib_vdif
 
 
 

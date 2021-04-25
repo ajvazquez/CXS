@@ -48,13 +48,13 @@ import os
 if os.environ.get("is_legacy"):
     from lib_ini_files import *
 else:
-    from config.const_ini_files import DELAY_MODEL_ABS_MARKER, DELAY_MODEL_REL_MARKER, DELAY_MODEL_REF_MARKER, \
+    from cxs.config.const_ini_files import DELAY_MODEL_ABS_MARKER, DELAY_MODEL_REL_MARKER, DELAY_MODEL_REF_MARKER, \
         DELAY_MODEL_RR0_MARKER, DELAY_MODEL_RR1_MARKER, DELAY_MODEL_RR2_MARKER, DELAY_MODEL_RC0_MARKER, \
         DELAY_MODEL_RC1_MARKER, DELAY_MODEL_ZC0_MARKER, DELAY_MODEL_ZC1_MARKER, DELAY_MODEL_RRR_MARKER, \
         DELAY_MODEL_RCR_MARKER, DELAY_MODEL_RCC_MARKER, DELAY_MODEL_RCM_MARKER, DELAY_MODEL_DDD_MARKER, \
         DELAY_MODEL_SIM_MARKER
-    from config.const_ini_files import C_INI_ST_CLOCK_REF, C_INI_ST_CLOCK_OFFSET, C_INI_ST_CLOCK_POLY, C_INI_MODEL_DELAY
-    from config.lib_ini_files import get_val_vector, get_all_sections, get_section_delay_model, get_pair_st_so, \
+    from cxs.config.const_ini_files import C_INI_ST_CLOCK_REF, C_INI_ST_CLOCK_OFFSET, C_INI_ST_CLOCK_POLY, C_INI_MODEL_DELAY
+    from cxs.config.lib_ini_files import get_val_vector, get_all_sections, get_section_delay_model, get_pair_st_so, \
         get_seconds_ini_str
 
 

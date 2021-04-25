@@ -43,7 +43,7 @@ import os
 if os.environ.get("is_legacy"):
     from cx2d_lib import *
 else:
-    from conversion.difx.cx2d_lib import im_to_delay_model, input_to_stations, im_to_sources, input_to_correlation, \
+    from cxs.conversion.difx.cx2d_lib import im_to_delay_model, input_to_stations, im_to_sources, input_to_correlation, \
         input_to_media
 
 

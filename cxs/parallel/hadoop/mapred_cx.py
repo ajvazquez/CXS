@@ -80,17 +80,17 @@ if os.environ.get("is_legacy"):
     #imp.reload(lib_vq)
     #from lib_vq import *
 else:
-    from config.lib_ini_exper import check_errors_ini_exper, process_ini_files
+    from cxs.config.lib_ini_exper import check_errors_ini_exper, process_ini_files
     #from parallel.hadoop.const_config import *
     #from parallel.hadoop.const_hadoop import *
-    from parallel.hadoop.lib_config import get_log_file, is_this_node_master, get_config_mod_for_this_master, \
+    from cxs.parallel.hadoop.lib_config import get_log_file, is_this_node_master, get_config_mod_for_this_master, \
         override_configuration_parameters, get_configuration, reduce_list_nodes, overwrite_nodes_file,\
         get_conf_out_dirs, get_list_configuration_files
-    from parallel.hadoop.lib_mapredcorr import pipeline_app, get_mapper_params_str, get_mr_command, create_inter_sh, \
+    from cxs.parallel.hadoop.lib_mapredcorr import pipeline_app, get_mapper_params_str, get_mr_command, create_inter_sh, \
         get_reducer_params_str, run_mapreduce_sh
-    from parallel.hadoop.lib_hadoop_hdfs import process_hadoop_config_files, distribute_files, nodes_to_slaves_masters,\
+    from cxs.parallel.hadoop.lib_hadoop_hdfs import process_hadoop_config_files, distribute_files, nodes_to_slaves_masters,\
         cluster_stop, cluster_start, copy_files_to_hdfs, process_hcfile
-    from parallel.hadoop.lib_net_stats import init_net_stats, get_network_stats, print_network_totals, \
+    from cxs.parallel.hadoop.lib_net_stats import init_net_stats, get_network_stats, print_network_totals, \
         compute_txrx_bytes
 
 

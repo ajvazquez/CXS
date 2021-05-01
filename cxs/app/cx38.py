@@ -60,7 +60,7 @@ class CXworker(object):
     def init_out(self):
         out_sub_dir = "s" + time.strftime("%Y%m%d_%H%M%S")
         out_dir = self.config_gen.out_dir+out_sub_dir
-        os.mkdir(out_dir)
+        os.makedirs(out_dir, exist_ok=True)
         self.out_dir = out_dir
         self.out_file = out_dir + "/{}_s0_v0.out".format(self.config_gen.out_prefix)
 

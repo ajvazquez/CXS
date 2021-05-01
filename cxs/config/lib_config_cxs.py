@@ -126,7 +126,7 @@ def get_configuration(file_log, config_file, v=0):
     #DATA_DIR = None
 
     # Files
-    SPARK_HOME_DIR =     config.get(       C_CONF_FILES, C_CONF_FILES_SPARK_HOME_DIR)
+    SPARK_HOME_DIR =     config.get(       C_CONF_FILES, C_CONF_FILES_SPARK_HOME_DIR, fallback=None)
     OUTPUT_DIR =         config.get(       C_CONF_FILES, C_CONF_FILES_OUT_DIR)
     if OUTPUT_DIR[-1]!="/":
         OUTPUT_DIR+=("/")
@@ -153,7 +153,7 @@ def get_configuration(file_log, config_file, v=0):
 
     for x in FILES:
         if not os.path.isfile(x):
-            raise Exception("Cannot find experiment configuration file: {}".format(INI_FOLDER))
+            raise Exception("Cannot find experiment configuration file: {}".format(x))
 
     #if not os.path.isdir(DATA_DIR):
     #    raise Exception("Cannot find experiment data dir: {}".format(DATA_DIR))

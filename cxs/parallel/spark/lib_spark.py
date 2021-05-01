@@ -8,6 +8,7 @@ import io
 import os
 import time
 import findspark
+findspark.init()
 import uuid
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
@@ -27,7 +28,6 @@ class CXSworker(CXworker):
             os.environ[SPARK_HOME] = spark_home
         if app_name is None:
             app_name = "s" + time.strftime("%Y%m%d_%H%M%S")
-        findspark.init()
         spark = SparkSession.builder.appName(app_name)
         if spark_config_pairs:
             conf = SparkConf().setAll(spark_config_pairs)

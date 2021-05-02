@@ -8,9 +8,9 @@ import argparse
 from cxs.parallel.spark.lib_spark import CXSworker
 
 
-def run_spark_task(config_file, keep=False):
+def run_spark_task(config_file, keep=False, debug_partitions=False):
     start_time = time.time()
-    cxs = CXSworker(config_file=config_file)
+    cxs = CXSworker(config_file=config_file, debug_partitions=debug_partitions)
 
     sc = cxs.start_spark(spark_config_pairs=cxs.config_gen.spark_config_pairs,
                          spark_home=cxs.config_gen.spark_home)
@@ -32,13 +32,6 @@ def run_spark_task(config_file, keep=False):
     if not keep:
         end_time = time.time()
         print("Elapsed: {}".format(end_time-start_time))
-
-    print("Merging output...")
-
-    with open(cxs.out_file, 'wb') as fod:
-        for f in glob.glob(cxs.out_dir+"/sub_*.out"):
-            with open(f, 'rb') as fd:
-                shutil.copyfileobj(fd, fod)
     print("Done.")
 
 
@@ -62,6 +55,10 @@ def main():
     cparser.add_argument('-k', action="store", type=int, \
                          dest="keep", default=None, \
                          help="Number of minutes to keep Spark session open.")
+
+    cparser.add_argument('-v', action="store_true", \
+                         dest="keep", default=False, \
+                         help="Verbose.")
 
     args = cparser.parse_args()
     config_file = args.configuration_file

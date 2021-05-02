@@ -7,15 +7,11 @@ export PYTHONPATH=$PYTHONPATH:`pwd`/cxs
 import io
 import os
 import time
-import findspark
-findspark.init()
-import uuid
-from pyspark.sql import SparkSession
-from pyspark import SparkConf
-from cxs.app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP
 from cxs.app.cx38 import CXworker
 
 SPARK_HOME = "SPARK_HOME"
+# TODO: dynamic based on number of files/partitions
+MIN_PARTITIONS = 1000
 
 
 class CXSworker(CXworker):
@@ -24,6 +20,12 @@ class CXSworker(CXworker):
 
     @staticmethod
     def start_spark(app_name=None, spark_config_pairs=None, spark_home=None):
+
+        import findspark
+        findspark.init()
+        from pyspark.sql import SparkSession
+        from pyspark import SparkConf
+
         if spark_home:
             os.environ[SPARK_HOME] = spark_home
         if app_name is None:
@@ -42,14 +44,15 @@ class CXSworker(CXworker):
     def stop_spark(sc):
         sc.stop()
 
-    def __init__(self, config_file):
+    def __init__(self, config_file, debug_partitions=False):
 
         super().__init__(config_file=config_file)
+        self.debug_spark_partitions = debug_partitions
         self.init_out()
 
     def read_input_files(self, sc):
-        return sc.binaryFiles(self.config_gen.data_dir)
-        #return sc.binaryFiles(self.config_gen.data_dir, minPartitions=100)
+        #return sc.binaryFiles(self.config_gen.data_dir)
+        return sc.binaryFiles(self.config_gen.data_dir, minPartitions=MIN_PARTITIONS)
 
     def process_file(self, rdd):
        f_name = rdd[0].split("/")[-1]
@@ -60,17 +63,9 @@ class CXSworker(CXworker):
     def reduce_lines(self, rdd):
         return self.reducer(rdd[1])
 
-    def write_output(self, data):
-        new_file = self.out_dir + "/sub_"
-        file_id = uuid.uuid4().hex[:6]
-        data = [x for x in data]
-        try:
-            new_file = "{}_{}_{}.out".format(new_file, data[0].split(KEY_SEP)[0], file_id)
-        except:
-            new_file = "{}_{}.out".format(new_file, file_id)
-        with open(new_file, "w+") as f_out:
-            #for x in data.collect():
-            for x in data:
+    def write_output_full(self, data):
+        with open(self.out_file, "w") as f_out:
+            for x in data.collect():
                 print(x, file=f_out)
 
     def run(self, sc):
@@ -92,7 +87,7 @@ class CXSworker(CXworker):
         self.print_partitions(data_sorted, "repartition")
 
         data_reduced = data_sorted.flatMap(lambda rdd:self.reduce_lines(rdd))
-        data_reduced.foreachPartition(lambda rdd:self.write_output(rdd))
+        self.write_output_full(data_reduced)
 
 
     # Debug
@@ -117,8 +112,10 @@ class CXSworker(CXworker):
             else:
                 extra += " [DF]"
             print("---------{}----------".format(extra))
-            numPartitions = rdd.getNumPartitions()
-            print("Total partitions: {}".format(numPartitions))
+            num_partitions = rdd.getNumPartitions()
+            records = df.glom().map(len).collect()
+            print("Total partitions: {}".format(num_partitions))
+            print("Records per partition: {}".format(records))
             print("Partitioner: {}".format(rdd.partitioner))
             parts = rdd.glom().collect()
             i = 0

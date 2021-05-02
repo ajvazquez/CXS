@@ -221,26 +221,30 @@ def process_ini_media(params_array_media,data_dir,v,file_log):
     error_str_v=[]
     total_partitions=-1
     for fi in input_files:
-        
+
+        channels_asoc_vector = [int(val) for val in get_param_eq_vector(params_array_media, fi, C_INI_MEDIA_CHANNELS)]
+        num_channels = len(set(channels_asoc_vector))
+        #num_channels_frame = len(channels_asoc_vector)
+        if num_channels > max_num_channels:
+            max_num_channels = num_channels
+        pols_asoc_vector = [int(val) for val in get_param_eq_vector(params_array_media, fi, C_INI_MEDIA_POLARIZATIONS)]
+        num_pols = len(set(pols_asoc_vector))
+        if num_pols > max_num_pols:
+            max_num_pols = num_pols
+
         if not os.path.isfile(data_dir+fi):
-            error_str_v+=["ERROR: Media file "+data_dir+fi+" does not exist!"]
+            # TODO: handle case s3 file
+            if data_dir.strip().startswith("s3://"):
+                error_str_v += ["WARNING: s3 file {}, cannot extract stats"]
+            else:
+                error_str_v += ["ERROR: Media file "+data_dir+fi+" does not exist!"]
         else:
         
             vdif_stats=lib_vdif.get_vdif_stats(data_dir+fi,packet_limit=1,offset_bytes=0,only_offset_once=0,v=0)
             packet_size=vdif_stats[4]
             if packet_size>max_packet_size:
                 max_packet_size=packet_size
-        
-            channels_asoc_vector=[int(val) for val in get_param_eq_vector(params_array_media,fi,C_INI_MEDIA_CHANNELS)]
-            num_channels=len(set(channels_asoc_vector))
-            num_channels_frame=len(channels_asoc_vector)
-            if num_channels>max_num_channels:
-                max_num_channels=num_channels
-            pols_asoc_vector=[int(val) for val in get_param_eq_vector(params_array_media,fi,C_INI_MEDIA_POLARIZATIONS)]
-            num_pols=len(set(pols_asoc_vector))
-            if num_pols>max_num_pols:
-                max_num_pols=num_pols
-    
+
             total_frames += os.path.getsize(data_dir+fi)//packet_size
         
     
@@ -569,6 +573,9 @@ def process_ini_files(data_dir, ini_stations, ini_sources, ini_delay_model, ini_
             error_str_v=error_str_v,
             num_pols=num_pols,
         )
+        config.params_stations = serial_params_to_array(stations_serial_str)
+        config.params_media = serial_params_to_array(media_serial_str)
+        config.params_delays = serial_params_to_array(delays_serial_str)
         return config
 
 

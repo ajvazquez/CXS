@@ -1212,7 +1212,10 @@ def msvf(tot_stations,
          SINGLE_PRECISION,
          group_output=False,
          reader=None,
-         forced_filename=None):
+         forced_filename=None,
+         forced_params_stations=None,
+         forced_params_media=None,
+         forced_params_delays=None):
 
     output = None
     if group_output:
@@ -1222,13 +1225,22 @@ def msvf(tot_stations,
 
     # Experiment configuration
     # Initialization files
-    stations_serial_str=serialize_config(ini_stations)
-    media_serial_str=serialize_config(ini_media)
-    delays_serial_str=serialize_config(ini_delays)
     # Serializations into vectors
-    params_stations=serial_params_to_array(stations_serial_str)
-    params_media=serial_params_to_array(media_serial_str)
-    params_delays=serial_params_to_array(delays_serial_str)
+    if forced_params_stations:
+        params_stations = forced_params_stations
+    else:
+        stations_serial_str = serialize_config(ini_stations)
+        params_stations = serial_params_to_array(stations_serial_str)
+    if forced_params_media:
+        params_media = forced_params_media
+    else:
+        media_serial_str = serialize_config(ini_media)
+        params_media = serial_params_to_array(media_serial_str)
+    if forced_params_delays:
+        params_delays = forced_params_delays
+    else:
+        delays_serial_str = serialize_config(ini_delays)
+        params_delays = serial_params_to_array(delays_serial_str)
 
 
     
@@ -1997,7 +2009,10 @@ def fun_mapper(config_gen, config_ini, f, f_name):
          config_gen.single_precision,
          group_output=True,
          reader=f,
-         forced_filename=f_name)
+         forced_filename=f_name,
+         forced_params_stations=config_ini.params_stations,
+         forced_params_media=config_ini.params_media,
+         forced_params_delays=config_ini.params_delays)
 
 
 if __name__ == '__main__':

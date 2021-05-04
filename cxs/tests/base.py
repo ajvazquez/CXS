@@ -10,7 +10,7 @@ from cxs.conversion.difx.cx2d_lib import get_error_indicator
 PY3 = sys.version_info[0] == 3
 
 # Time old last exec output
-RECENT_FILE_S = 1.0
+RECENT_FILE_S = 2.0
 
 THIS_PATH = os.path.dirname(os.path.realpath(__file__))
 

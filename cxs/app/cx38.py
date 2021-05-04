@@ -57,10 +57,14 @@ class CXworker(object):
         self.config_gen, self.config_ini = self.read_config(config_file=config_file)
         self.num_partitions, self.num_accs, self.num_channels = self.get_partitions_info()
 
-    def init_out(self):
+    def init_out(self, raise_if_error=True):
         out_sub_dir = "s" + time.strftime("%Y%m%d_%H%M%S")
         out_dir = self.config_gen.out_dir+out_sub_dir
-        os.makedirs(out_dir, exist_ok=True)
+        try:
+            os.makedirs(out_dir, exist_ok=True)
+        except Exception as e:
+            if raise_if_error:
+                raise e
         self.out_dir = out_dir
         self.out_file = out_dir + "/{}_s0_v0.out".format(self.config_gen.out_prefix)
 

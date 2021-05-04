@@ -44,11 +44,12 @@ class CXSworker(CXworker):
     def stop_spark(sc):
         sc.stop()
 
-    def __init__(self, config_file, debug_partitions=False):
+    def __init__(self, config_file, debug_partitions=False, save_txt_only=True):
 
         super().__init__(config_file=config_file)
         self.debug_spark_partitions = debug_partitions
-        self.init_out()
+        self.save_txt_only = save_txt_only
+        self.init_out(raise_if_error=not save_txt_only)
 
     def read_input_files(self, sc):
         #return sc.binaryFiles(self.config_gen.data_dir)
@@ -87,7 +88,10 @@ class CXSworker(CXworker):
         self.print_partitions(data_sorted, "repartition")
 
         data_reduced = data_sorted.flatMap(lambda rdd:self.reduce_lines(rdd))
-        self.write_output_full(data_reduced)
+        if self.save_txt_only:
+            data_reduced.saveAsTextFile(self.out_file)
+        else:
+            self.write_output_full(data_reduced)
 
 
     # Debug

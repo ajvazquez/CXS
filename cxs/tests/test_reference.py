@@ -18,5 +18,5 @@ class TestReference(BaseTest):
         """
         Compare numeric sorting reference files py2-py3.
         """
-        acc_error = self.compare_results(REF_FILE_PY2_LEGACY, REF_FILE_PY3_LEGACY)
+        acc_error = self.compare_results(REF_FILE_PY2_NUMERIC, REF_FILE_PY3_NUMERIC)
         self.assertTrue(acc_error < self.THRESHOLD_ERROR_PY2_PY3)

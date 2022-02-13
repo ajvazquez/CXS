@@ -66,8 +66,9 @@ bash sh/run_example_vgos_spark.sh
 The test data corresponds to the dataset described in "Prospects for Wideband VLBI Correlation in the Cloud", by Gill et al.,
 published in Publications of the Astronomical Society of the Pacific, 131:124501 (13pp), 2019 October.
 
-This dataset corresponds to 20 s of (assumed real data), 2 bits per sample, 1 channel and 2 polarizations, with a sampling frequency of 2 GHz (20 GB per station).
-For this project, this data was generated with the script in ```examples/test_dataset_test/gen_test_file.py``` for 2 stations, and split into blocks of 100 MB with the script ```examples/test_dataset_test/aws/split_files.sh```
+This dataset corresponds to 20 s of (assumed real data), 2 bits per sample, 1 channel and 2 polarizations, with a sampling frequency of 4 GHz (40 GB per station).
+
+For this project, this data was generated with the script in ```examples/test_dataset_test/gen_test_file.py``` for 2 stations, a sampling frequency of 2 GHz (20 GB per station), and split into blocks of 100 MB with the script ```examples/test_dataset_test/aws/split_files.sh```
 before uploading it to AWS S3.
 
 ### Procedure
@@ -81,12 +82,12 @@ Running a correlation on AWS EMR:
 
 ### Results
 
-Performance (processing rate) is calculated dividing the total data (40 GB) by the measured time and by the number of vCPUs (16).
+Performance (processing rate) is calculated dividing the total data by the measured time and by the number of vCPUs (16).
 
 ```
-              cluster             time      processing rate by single vCPU
-DiFX-2.5.2    1x n1-highmem-16    2000 s    1.28 MB/s
-CXS338        4x m4.xlarge        4309 s    0.59 MB/s
+              cluster             data     time      processing rate by single vCPU
+DiFX-2.5.2    1x n1-highmem-16    80 GB    2000 s    2.56 MB/s
+CXS338        4x m4.xlarge        40 GB    4309 s    0.59 MB/s
 ```
 
 GCP n1-highmem-16:
@@ -115,7 +116,7 @@ python setup.py sdist
 ```
 virtualenv -p python3 venv3
 source venv3/bin/activate
-pip install pip install dist/cxs338-0.0.1.tar.gz
+pip install dist/cxs338-0.0.1.tar.gz
 ```
 
 ### Execution

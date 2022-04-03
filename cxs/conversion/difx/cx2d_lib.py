@@ -347,7 +347,7 @@ except ImportError:
 
 if ENABLE_PLOTTING:
     #mpl.use('PS')
-    mpl.use('Agg')
+    #mpl.use('Agg')
     #mpl.use("pgf")
     import matplotlib.pyplot as plt
     import matplotlib.font_manager as font_manager
@@ -459,12 +459,12 @@ def read_line_cx(line,fft_size=-1):
     if fft_size>0 and len(data.split(' ')[META_LEN:])<fft_size:
         datac=None
     else:
-        samples = read_output_samples(data, META_LEN)
+        datac = read_output_samples(data, META_LEN)
 
     header_data_split = data.split(' ')[:META_LEN]
-    n_bins = int(header_data_split[INDEX_NBINS_PCAL])
+    n_bins = int(float(header_data_split[INDEX_NBINS_PCAL]))
     pcal_freq = int(float(header_data_split[INDEX_PCAL_FREQ])//1)
-    chan_index = int(header_data_split[INDEX_CHANNEL_INDEX])
+    chan_index = int(float(header_data_split[INDEX_CHANNEL_INDEX]))
     acc_period = vis  
     
     fs = float(data.split(' ')[INDEX_FS])
@@ -1212,7 +1212,7 @@ def read_doutput(doutput_file,complex_vector_length,vis_limit=10,filter_bands=[]
         
         continue_reading =1
         visibilities_v = []
-        
+
         while continue_reading:
             
             header =             read_bytes_from_file(f,       NUM_BYTES_SWIN_HEADER)

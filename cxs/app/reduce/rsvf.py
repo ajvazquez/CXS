@@ -520,13 +520,23 @@ def update_stored_samples(v_dequant,F1,F_ind,key_station_pol,F_delays,F_rates,F_
     # TO DO: move to extract_params
     if data_type=='c':
         first_sample_adjusted=int(first_sample//2)
+        #first_sample_adjusted=first_sample
         #TO DO: need more elegant solution to support real and complex...
         fft_size_out=fft_size_in
+        # TODO: check
+        fft_size_out=2*fft_size_in
+        first_sample_adjusted=first_sample
+        #first_sample_adjusted=first_sample
+        #fft_size_out=fft_size_in
+        fs = fs/2
+        v_dequant = np.repeat(v_dequant, 2)
+        v_dequant[::2] = 0
     else:
         first_sample_adjusted=first_sample
         #TO DO: need more elegant solution to support real and complex...
         fft_size_out=2*fft_size_in
-    
+        #fft_size_out=fft_size_in
+
     
     if F1 is None:
         F1=[v_dequant]
@@ -537,7 +547,7 @@ def update_stored_samples(v_dequant,F1,F_ind,key_station_pol,F_delays,F_rates,F_
         F_fs=[fs]
         F_fs_pcal=[fs_pcal]
         F_first_sample=[first_sample_adjusted]
-        F_side=[[sideband,data_type]]
+        F_side=[[sideband,data_type, fft_size_out]]
     else:
         # Always same sorting
         F_ind.append(key_station_pol)
@@ -550,7 +560,10 @@ def update_stored_samples(v_dequant,F1,F_ind,key_station_pol,F_delays,F_rates,F_
         F_fs.insert(new_pos, fs)
         F_fs_pcal.insert(new_pos, fs_pcal)
         F_first_sample.insert(new_pos, first_sample_adjusted)
-        F_side.insert(new_pos, [sideband, data_type])
+        F_side.insert(new_pos, [sideband, data_type, fft_size_out])
+
+    # TODO: check
+    fft_size_out = fft_size_in
 
     return([F1,F_ind,F_delays,F_rates,F_fs,F_fs_pcal,F_first_sample,F_frac,F_side,fft_size_out])
 

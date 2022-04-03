@@ -403,7 +403,7 @@ def get_frac_over_ind(F_first_sample,F1,F_rates,F_fs,F_ind,F_side):
     for i in range(len(F1)):
         fs=F_fs[i]
         Ts=1/fs
-        [sideband,data_type]=F_side[i]
+        [sideband,data_type,sub_fft_size]=F_side[i]
         
         #sample0=F_first_sample[F_refs[stpol]]-len(F1[F_refs[stpol]])
         first_sample=float(F_first_sample[i])
@@ -653,7 +653,7 @@ def get_rotator(x):
 
 
 
-def window_and_fft(v1_dequant,fft_size,windowing,flatten_chunks=1,dtype_complex=complex,rfft_data_type='c'):
+def window_and_fft(v1_dequant,fft_size,windowing,flatten_chunks=1,dtype_complex=complex,rfft_data_type='c', F_side=None):
     """
     Apply window and do FFT of set of samples, to be grouped into chunks of FFT size.
     
@@ -734,7 +734,7 @@ def window_and_fft(v1_dequant,fft_size,windowing,flatten_chunks=1,dtype_complex=
                         v1fft=scfft.fft(reshaped_dequant)
                     else:
                         v1fft=scfft.rfft(reshaped_dequant)
-                else:    
+                else:
                     fftw_input = pyfftw.empty_aligned(reshaped_dequant.shape, dtype=dtype_complex)
                     fftw_input[:] = reshaped_dequant
                     v1fft = pyfftw.interfaces.numpy_fft.fft(fftw_input,threads=THREADS_FFTW)
@@ -1098,7 +1098,7 @@ def fringe_rotation(F1,F_first_sample,F_rates,freq_channel,F_fs,F_delays,F_refs,
         
         fs=F_fs[F_refs[i]]
         Ts=1/fs
-        [sideband,data_type]=F_side[F_refs[i]]
+        [sideband,data_type,sub_fft_size]=F_side[F_refs[i]]
         
         # Integer delay already applied (multiple of Ts)
         shift_delay=0
@@ -1149,6 +1149,23 @@ def fringe_rotation(F1,F_first_sample,F_rates,freq_channel,F_fs,F_delays,F_refs,
  
      
     return([F1,F_first_sample])
+
+
+
+def get_freqscale(data_type, fft_size, sideband):
+    if data_type == 'c':
+        freqscale2 = np.arange(0, 1, 1 / float(fft_size))
+        fft_size_comp = fft_size
+    else:
+        if sideband == 'L':
+            freqscale2 = float(-1) * np.arange(0.5, 0, float(-1) / float(
+                fft_size))  # First half of the full vector (e.g. [-0.5 -0.375 -0.25 -0.125] with fft_size=8)
+        else:
+            freqscale2 = np.arange(0, 1, 1 / float(fft_size))[
+                         :fft_size // 2]  # Second half the full vector (e.g. [ 0. 0.125 0.25 0.375] with fft_size=8)
+
+        fft_size_comp = fft_size // 2
+    return freqscale2
 
 
 def compute_f_all(F1,fft_size,windowing,dtype_complex,F_frac=[],F_fs=[],F_refs=[],freq_channel=0,\
@@ -1235,46 +1252,76 @@ def compute_f_all(F1,fft_size,windowing,dtype_complex,F_frac=[],F_fs=[],F_refs=[
     F_pcal_fix_out=[]
     F_first_sample_out=[]
     # TO DO: assuming all data same type for now
-    [sideband,data_type]=F_side[0] 
+    [sideband,data_type, sub_fft_size]=F_side[0]
     # Windowing and FFT
     first_iteration=1
     last_fractional_recalc=0
     last_str_st=""
-    F1_fft = window_and_fft(F1,fft_size,windowing,flatten_chunks=0,dtype_complex=dtype_complex) # ,rfft_data_type=data_type)
-    
+    #F1_fft = window_and_fft(F1,fft_size,windowing,flatten_chunks=0,dtype_complex=dtype_complex, F_side=F_side) # ,rfft_data_type=data_type)
+    F1_fft = [window_and_fft([F1[x]],F_side[x][2],windowing,flatten_chunks=0,dtype_complex=dtype_complex)[0] for x in range(len(F_side))] # ,rfft_data_type=data_type)
+
+
+    #TODO: testing
+    #data_type = "c"
+
+
     # If real samples take only half FFT (LSB or USB as applicable)
-    if data_type=='r':
-        if sideband=='L':
-            F1_fft = np.delete(F1_fft,np.s_[:fft_size//2],2) 
+    F1_fft_out = []
+    for x in range(len(F_side)):
+        sub_sideband, sub_data_type, sub_fft_size = F_side[x]
+        # TODO: testing
+        #sub_data_type = "c"
+        if sub_data_type=='r':
+            if sub_sideband=='L':
+                F1_fft_out.append(np.delete(F1_fft[x],np.s_[:sub_fft_size//2],1))
+                #F1_fft_out.append(np.delete(F1_fft[x],np.s_[:fft_size],1))
+            else:
+                F1_fft_out.append(np.delete(F1_fft[x],np.s_[sub_fft_size//2:],1))
+                #F1_fft_out.append(np.delete(F1_fft[x],np.s_[fft_size:],1))
         else:
-            F1_fft = np.delete(F1_fft,np.s_[fft_size//2:],2)
+            #F1_fft_out.append(F1_fft[x])
+            # TODO: last
+            #rx = np.roll(np.delete(F1_fft[x],np.s_[:sub_fft_size//2],1), sub_fft_size//4)
+            rx = np.roll(np.delete(F1_fft[x],np.s_[:sub_fft_size//2],1), -1+sub_fft_size//4)
+            if sub_sideband=='L':
+                #F1_fft_out.append(np.roll(F1_fft[x], fft_size//4))
+                #rx = np.delete(F1_fft[x], np.s_[sub_fft_size // 2:], 1)
+                rx = np.flip(rx)
+                #F1_fft_out.append(np.roll(rx, -1 * (fft_size // 4)))
+            else:
+                #F1_fft_out.append(np.roll(F1_fft[x], -fft_size//4))
+                #F1_fft_out.append(np.delete(F1_fft[x],np.s_[sub_fft_size//2:],1))
+                #rx = np.delete(F1_fft[x],np.s_[:sub_fft_size//2],1)
+                #F1_fft_out.append(np.roll(rx, fft_size // 4))
+                pass
+            #F1_fft_out.append(np.roll(rx,fft_size//4))
+            F1_fft_out.append(rx)
+
+    F1_fft = np.array(F1_fft_out)
 
     shift_int=0
     # Fractional sample correction
     F1_fft_rot=np.zeros(F1_fft.shape,dtype=dtype_complex)
     error_f_frac=1
     if F_rates!=[]:
-        
-        if data_type=='c':
-            freqscale2 = np.arange(0,1,1/float(fft_size))
-            fft_size_comp=fft_size
-        else:
-            if sideband=='L':
-                freqscale2 = float(-1)*np.arange(0.5,0,float(-1)/float(fft_size)) # First half of the full vector (e.g. [-0.5 -0.375 -0.25 -0.125] with fft_size=8)
-            else:
-                freqscale2 = np.arange(0,1,1/float(fft_size))[:fft_size//2] # Second half the full vector (e.g. [ 0. 0.125 0.25 0.375] with fft_size=8)
 
-            fft_size_comp=fft_size//2
-        
+        freqscale2 = get_freqscale(data_type, sub_fft_size, sideband)
+
         # p363
-
+        F1_fft_out_2 = []
         for stpol in range(F1_fft.shape[0]):
+            F1_fft_sub = F1_fft[stpol]
             fs=F_fs[F_refs[stpol]]
             Ts=1/fs
-            [sideband,data_type]=F_side[F_refs[stpol]]
+            [sub_sideband,sub_data_type,sub_fft_size]=F_side[F_refs[stpol]]
             #str_st=F_ind[F_refs[stpol]].split('.')[0]
             str_st=F_ind[stpol].split('.')[0]
-                            
+
+            # Different for each one
+            # TODO: testing
+            sub_data_type = "c"
+            freqscale2 = get_freqscale(sub_data_type, sub_fft_size, sub_sideband)
+
             #sample0=F_first_sample[F_refs[stpol]]-len(F1[F_refs[stpol]])
             
             sample0=F_first_sample[F_refs[stpol]]
@@ -1319,7 +1366,7 @@ def compute_f_all(F1,fft_size,windowing,dtype_complex,F_frac=[],F_fs=[],F_refs=[
                 #    npr1 = np.arange(F1_fft.shape[1])
                 #    total_timescale = ne.evaluate("Ts*(sample0+fft_size*npr1)") # slower
                 #else:
-                total_timescale =Ts*(sample0+fft_size*np.arange(F1_fft.shape[1]))
+                total_timescale =Ts*(sample0+sub_fft_size*np.arange(F1_fft_sub.shape[0]))
                 
                 total_seconds_offset=0
                 [r_recalc,m_unused,c_recalc,r_unused,a_unused] = get_delay_val(\
@@ -1333,11 +1380,11 @@ def compute_f_all(F1,fft_size,windowing,dtype_complex,F_frac=[],F_fs=[],F_refs=[
 
                 [full_fractional_recalc,fractional_recalc] = get_full_frac_val(r_recalc,fs)
 
-                for row in range(F1_fft.shape[1]):
+                for row in range(F1_fft_sub.shape[0]):
                 
                     i_row+=1
-                    fsr=sample0+i_row*fft_size
-                    lsr=fsr+fft_size
+                    fsr=sample0+i_row*sub_fft_size
+                    lsr=fsr+sub_fft_size
 
                     
                     if DEBUG_DELAYS:
@@ -1376,12 +1423,13 @@ def compute_f_all(F1,fft_size,windowing,dtype_complex,F_frac=[],F_fs=[],F_refs=[
             last_str_st=str_st   
             
 
-            for row in range(F1_fft.shape[1]):
+            for row in range(F1_fft_sub.shape[0]):
                 if not nr:
                     try:
-                        np.multiply(F1_fft[stpol,row,:],frtot_v[row][0],F1_fft[stpol,row,:])
+                        np.multiply(F1_fft_sub[row,:],frtot_v[row][0],F1_fft_sub[row,:])
                     except IndexError:
-                        print("Error in rotation: "+str(len(frtot_v))+", "+str(F1_fft.shape))
+                        print("Error in rotation: "+str(len(frtot_v))+", "+str(F1_fft_sub.shape))
+            F1_fft_out_2.append(F1_fft_sub)
 
             if DEBUG_DELAYS: 
                 print("zR"+KEY_SEP+"f  "+str(stpol).rjust(5)+str(F_refs[stpol]).rjust(8)+F_ind[stpol].rjust(8)+\
@@ -1429,8 +1477,8 @@ def compute_f_all(F1,fft_size,windowing,dtype_complex,F_frac=[],F_fs=[],F_refs=[
               ','.join(map(str,F_adj_shift_partial_out))+"  "+\
               "   mon "+','.join(map(str,F_adj_shift_partial_mon)))
         print("zR"+KEY_SEP+"---------------")
-        
-    return([F1_fft,None,F_adj_shift_partial_out,F_adj_shift_pcal_out,F_pcal_fix_out,F_first_sample_out])
+    F1_fft_out_2 = np.array(F1_fft_out_2)
+    return([F1_fft_out_2,None,F_adj_shift_partial_out,F_adj_shift_pcal_out,F_pcal_fix_out,F_first_sample_out])
 
 
 
@@ -1474,8 +1522,8 @@ def compute_x_all(F1_fft,F2_fft,count_acc,acc_mat,index_scaling_pair=-1,dtype_co
     |
     |  Add counters for invalid data.
     """
-    fft_size_comp=F1_fft.shape[2]
-    
+    fft_size_comp=F1_fft[0].shape[1]
+
     if F2_fft is None:
         F2_fft = np.conj(F1_fft)
     n_sp=len(F1_fft)
@@ -1486,6 +1534,7 @@ def compute_x_all(F1_fft,F2_fft,count_acc,acc_mat,index_scaling_pair=-1,dtype_co
         if acc_mat is None:
             acc_mat=np.zeros([n_sp,n_sp,fft_size_comp],dtype=dtype_complex)
         for i1 in range(n_sp):
+            # TODO: :fft_size/2 if real, fft_size if complex
             acc_mat[i1,i1:]+=np.sum(np.multiply(F1_fft[i1,:],F2_fft[i1:,:]),axis=1)
     else:
         # Linear-scaling-stations

@@ -1,4 +1,5 @@
 **.pyc
+.idea/*
 conf/*
 !conf/correlx.ini
 !conf/cxs338.ini

@@ -102,28 +102,50 @@ The following figure compares cluster sizes and total performance for the result
 
 ![Performance comparison](perf_comparison.png?raw=true "Performance Comparison")
 
+
 ## Deployment
 
-### Packaging
+### Installation from package
 
-Increase version in ```version.txt``` and then run:
+For packaging, increase version in ```version.txt``` and then run:
 ```
 python setup.py sdist
 ```
 
-### Installation
-
+For installation:
 ```
 virtualenv -p python3 venv3
 source venv3/bin/activate
 pip install dist/cxs338-0.0.1.tar.gz
 ```
 
-### Execution
+### Installation from repository
+
+Installing directly from github:
+```
+python3 -m venv venv3
+venv3/bin/pip install -e git+https://github.com/ajvazquez/CXS338.git@master#egg=CXS338
+```
+
+## Execution
 
 ```
 cxs -c <path-to-cxs338.ini>
 ```
+
+
+## Processing Chain
+
+Integration with existing processing chains using dockerized tools can be seen in 
+[VLBI correlation docker tools](https://github.com/ajvazquez/VLBI-Correlation-Docker-Tools).
+
+
+## Development Environment
+
+For setting up a simple development environment the runners ```d-cxp-dev``` and ```d-cxs-dev``` 
+from [VLBI correlation docker tools](https://github.com/ajvazquez/VLBI-Correlation-Docker-Tools) can be used, overwriting the path to the 
+sources folder in the run_dev.sh scripts.
+
 
 ## Tests
 
@@ -139,4 +161,4 @@ python -m unittest discover -s .
 
 ## Project Status
 
-This project is a prototype / alpha. 
+This project is a prototype (alpha), only intended for development/testing.

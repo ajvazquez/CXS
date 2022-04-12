@@ -102,7 +102,7 @@ def main():
     print("")
     print("Output files:")
     print(" "+file_out)
-    if pcal_file_list!=[]:
+    if pcal_file_list:
         for i in pcal_file_list:
             print(" "+i)
 

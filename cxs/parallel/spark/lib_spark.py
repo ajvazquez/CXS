@@ -57,7 +57,6 @@ class CXSworker(CXworker):
         def get_lambda(name,dt):
             return lambda dt:(name,dt)
         data = [dt.map(get_lambda(name,dt)) for name,dt in data_records]
-        num_partitions = sum([x.getNumPartitions() for x in data])
         data_united = sc.union(data)
         return data_united
     

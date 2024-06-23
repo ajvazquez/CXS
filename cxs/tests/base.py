@@ -9,6 +9,8 @@ from cxs.conversion.difx.cx2d_lib import get_error_indicator
 
 PY3 = sys.version_info[0] == 3
 
+SUPPRESS_OUTPUT = True
+
 # Time old last exec output
 RECENT_FILE_S = 2.0
 
@@ -43,11 +45,13 @@ class BaseTest(unittest.TestCase):
     VERBOSE = True
 
     def _enable_output(self):
-        sys.stdout = sys.__stdout__
+        if SUPPRESS_OUTPUT:
+            sys.stdout = sys.__stdout__
 
     def _disable_output(self):
-        suppress_text = io.StringIO()
-        sys.stdout = suppress_text
+        if SUPPRESS_OUTPUT:
+            suppress_text = io.StringIO()
+            sys.stdout = suppress_text
 
     @classmethod
     def setUpClass(cls):

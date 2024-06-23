@@ -51,9 +51,27 @@ class CXSworker(CXworker):
         self.save_txt_only = save_txt_only
         self.init_out(raise_if_error=not save_txt_only)
 
-    def read_input_files(self, sc):
-        #return sc.binaryFiles(self.config_gen.data_dir)
+    def _read_input_files_many_blocks(self, sc):
+        config_data = self.config_for_partitioned_reading()
+        data_records = [(fpath, sc.binaryRecords(fpath,bpf)) for fpath,bpf in config_data]
+        def get_lambda(name,dt):
+            return lambda dt:(name,dt)
+        data = [dt.map(get_lambda(name,dt)) for name,dt in data_records]
+        num_partitions = sum([x.getNumPartitions() for x in data])
+        data_united = sc.union(data)
+        return data_united
+    
+    def _read_input_files_single_block(self, sc):
         return sc.binaryFiles(self.config_gen.data_dir, minPartitions=MIN_PARTITIONS)
+
+
+    def read_input_files(self, sc):
+        if self.config_for_partitioned_reading():
+            # Custom block size specific in config
+            return self._read_input_files_many_blocks(sc)
+        else:
+            # One file per block
+            return self._read_input_files_single_block(sc)
 
     def process_file(self, rdd):
        f_name = rdd[0].split("/")[-1]
@@ -78,6 +96,8 @@ class CXSworker(CXworker):
             return y
 
         files = self.read_input_files(sc)
+        self.print_partitions(files, "read")
+
         data = files.flatMap(lambda rdd:self.process_file(rdd))
         self.print_partitions(data, "map")
 
@@ -88,6 +108,8 @@ class CXSworker(CXworker):
         self.print_partitions(data_sorted, "repartition")
 
         data_reduced = data_sorted.flatMap(lambda rdd:self.reduce_lines(rdd))
+        self.print_partitions(data_sorted, "reduced")
+
         if self.save_txt_only:
             data_reduced.saveAsTextFile(self.out_file)
         else:
@@ -98,6 +120,10 @@ class CXSworker(CXworker):
 
     def print_partitions(self, df, extra=None):
         if self.debug_spark_partitions:
+            if isinstance(df, list):
+                for sub_df in df:
+                    self.print_partitions(sub_df)
+                return
             if hasattr(df, "explain"):
                 df.explain()
             if hasattr(df, "rdd"):
@@ -145,11 +171,17 @@ class CXSworker(CXworker):
         from cxs.iocx.readers.vdif.lib_vdif import get_vdif_stats
 
         params_media=serial_params_to_array(self.config_ini.media_serial_str)
-        data_dir = self.config_gen.data_dir
-        if data_dir.startswith("file://"):
-            data_dir = data_dir[7:]
+        config_partitioned_reading = self.config_for_partitioned_reading()
         input_files = get_val_vector(params_media,C_INI_MEDIA_S_FILES,C_INI_MEDIA_LIST)
-        paths_files = glob.glob(data_dir)
+        if not config_partitioned_reading:
+            data_dir = self.config_gen.data_dir
+            if data_dir.startswith("file://"):
+                data_dir = data_dir[7:]
+            paths_files = glob.glob(data_dir)
+        else:
+            total_blocks = 0
+            paths_files = [x[0] for x in config_partitioned_reading]
+            paths_files = [x[7:] if x.startswith("file://") else x for x in paths_files]
         count_match = 0
         tot = len(paths_files)
         found = []

@@ -1,5 +1,6 @@
-import time
+import glob
 import os
+import time
 # legacy
 #from lib_config import get_configuration
 from cxs.config.lib_config_cxs import get_configuration
@@ -38,6 +39,41 @@ class CXworker(object):
                                        v=v)
         return [config_gen, config_ini]
 
+    def config_for_partitioned_reading(self):
+        config_data = None
+        if "@" in self.config_gen.data_dir:
+            config_data = [x.split("@") for x in self.config_gen.data_dir.split(",")]
+            config_data = [[fpath, int(bsize)] for fpath, bsize in config_data]
+        return config_data
+
+    def get_read_partitions_info(self):
+        config_partitioned_reading = self.config_for_partitioned_reading()
+        if not config_partitioned_reading:
+            data_dir = self.config_gen.data_dir
+            if data_dir.startswith("file://"):
+                data_dir = data_dir[7:]
+            paths_files = glob.glob(data_dir)
+            print("Partitions reading: {} (one reader per file)".format(len(paths_files)))
+        else:
+            try:
+                total_blocks = 0
+                paths_files = [x[0] for x in config_partitioned_reading]
+                paths_files = [x[7:] if x.startswith("file://") else x for x in paths_files]
+                for count in range(len(paths_files)):
+                    config_partitioned_reading[count][0] = paths_files[count]
+                blocks = [os.path.getsize(x[0])/x[1] for x in config_partitioned_reading]
+                total_blocks = sum(blocks)
+                if total_blocks - int(total_blocks) == 0:
+                    total_blocks = int(total_blocks)
+                print("Partitions reading: {} ({})".format(total_blocks, "+".join(list(map(str,blocks)))))
+                for fpath, bsize in config_partitioned_reading:
+                    num_blocks = os.path.getsize(fpath)/bsize
+                    #print(" - {} -> block size={}, total blocks={}".format(fpath, bsize, num_blocks))
+                    if num_blocks-num_blocks//1 != 0:
+                        print("   + WARNING: non-integer number of blocks for {}".format(fpath))
+            except:
+                print("Partitions reading: ?")
+
     def get_partitions_info(self):
         params_media = serial_params_to_array(self.config_ini.media_serial_str)
         ch_v = get_all_values_serial(params_media,C_INI_MEDIA_CHANNELS)
@@ -50,11 +86,12 @@ class CXworker(object):
         acc_time = float(self.config_ini.accumulation_time)
         num_accs = int(-(s_duration//-acc_time))
         num_partitions = num_accs * num_channels
-        print("Partitions: {} (accs: {}, channels: {})".format(num_partitions, num_accs, num_channels))
+        print("Partitions processing: {} (accs: {}, channels: {})".format(num_partitions, num_accs, num_channels))
         return [num_partitions, num_accs, num_channels]
 
     def __init__(self, config_file="cxs338.ini"):
         self.config_gen, self.config_ini = self.read_config(config_file=config_file)
+        self.get_read_partitions_info()
         self.num_partitions, self.num_accs, self.num_channels = self.get_partitions_info()
 
     def init_out(self, raise_if_error=True):

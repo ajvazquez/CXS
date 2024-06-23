@@ -1,1 +1,1 @@
-/home/aj/work/cx_git/CorrelX/cxs/tools/gen_symlinks.py
+/opt/cx/venv3/src/cxs338/cxs/tools/gen_symlinks.py

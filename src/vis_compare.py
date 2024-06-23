@@ -1,1 +1,1 @@
-/home/aj/work/cx_git/CorrelX/cxs/iocx/visibilities/tools/vis_compare.py
+/opt/cx/venv3/src/cxs338/cxs/iocx/visibilities/tools/vis_compare.py

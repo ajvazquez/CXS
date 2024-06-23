@@ -1,1 +1,1 @@
-/home/aj/work/cx_git/CorrelX/cxs/parallel/hadoop/mapred_cx.py
+/opt/cx/venv3/src/cxs338/cxs/parallel/hadoop/mapred_cx.py

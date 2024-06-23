@@ -1,1 +1,1 @@
-/home/aj/work/cx_git/CorrelX/cxs/computation/acc_periods/lib_acc_comp.py
+/opt/cx/venv3/src/cxs338/cxs/computation/acc_periods/lib_acc_comp.py

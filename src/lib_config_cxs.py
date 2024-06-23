@@ -1,1 +1,1 @@
-/home/aj/work/cx_git/CorrelX/cxs/config/lib_config_cxs.py
+/opt/cx/venv3/src/cxs338/cxs/config/lib_config_cxs.py

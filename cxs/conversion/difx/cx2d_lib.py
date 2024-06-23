@@ -300,13 +300,16 @@ import os
 import sys
 if CX_IMPORT_CONST_MAPRED=="latest":
     if os.environ.get("is_legacy"):
+        import const_mapred
         from const_mapred import *        # CX output separators and field locations (!) Make sure it is the same as used in correlation.
     else:
+        import cxs.app.base.const_mapred as const_mapred
         from cxs.app.base.const_mapred import KEY_SEP, FIELD_SEP, SF_SEP, INDEX_NBINS_PCAL, INDEX_PCAL_FREQ, \
             INDEX_CHANNEL_INDEX, INDEX_FS, INDEX_KEY_CHANNEL, B64_VIS_PREFIX, META_LEN, SP_VIS_PREFIX, DP_VIS_PREFIX
 
 
 elif CX_IMPORT_CONST_MAPRED=="2016.08.04":
+    import const_mapred_legacy_20160804 as const_mapred
     from const_mapred_legacy_20160804 import *
 
 if CX_OVERRIDE_META_LEN>0:
@@ -571,7 +574,9 @@ def get_list_meta(const_file="const_mapred.py",path_src=""):
     -----
      Hardcoded values based on const_mapred.py, use only for debugging.
     """
-    const_file = path_src+"/"+const_file
+    # TODO: cleanup
+    #const_file = path_src+"/"+const_file
+    const_file = os.path.abspath(const_mapred.__file__)
     mode_read=0
     line_st_v=[]
     filter_str="INDEX_"

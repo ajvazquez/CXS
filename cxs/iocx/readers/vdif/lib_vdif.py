@@ -489,7 +489,7 @@ def read_vdif_frame(f,show_errors=0,forced_frame_length=0,offset_bytes=0,v=0,ret
 
     words_header = read_words_from_file_to_raw(f,HEADER_VDIF_WORDS,v)
     
-    if (words_header == [])or(len(words_header)==0):
+    if not len(words_header):
         failed_read = 1
         if show_errors:
             print("z-"  + "-Failed to read samples")
@@ -521,7 +521,7 @@ def read_vdif_frame(f,show_errors=0,forced_frame_length=0,offset_bytes=0,v=0,ret
         n_words_samples = (frame_length-HEADER_BYTES)//(WORD_SIZE_BYTES)
         
         words_samples = read_words_from_file_to_raw(f,n_words_samples,v)#,ENDIAN_BITARRAY,ENDIAN_STRUCT_READING)
-        if words_samples == []:
+        if not len(words_samples):
             failed_read = 1
             if show_errors:
                 print("z-"  + "-Failed to read samples")

@@ -1,7 +1,8 @@
-# Python 3.8.6
-bitarray==1.7.0
-findspark==1.4.2
-matplotlib==3.3.4
-numpy==1.20.1
-pyspark==3.0.1
-scipy==1.6.0
+# Python 3.11.9
+bitarray==2.9.2
+findspark==2.0.1
+matplotlib==3.9.0
+numpy==2.0.0
+py4j==0.10.9.7
+pyspark==3.5.1
+scipy==1.13.1

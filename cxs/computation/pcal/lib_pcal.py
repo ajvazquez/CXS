@@ -35,14 +35,16 @@ Phase calibration routines.
 #MIT Haystack Observatory
 
 from __future__ import print_function
-import fractions
 import numpy as np
 
 
 
 # Map routines.
 
-def fr_gcd(a,b): return(fractions.gcd(a,b))
+def fr_gcd(a,b): 
+    if a != int(a) or b != int(b):
+        raise Exception("cgd")
+    return(np.gcd(int(a),int(b)))
 
 
 def get_pcal_ind(freqs,sidebands,fs,f_pcal,o_pcal):

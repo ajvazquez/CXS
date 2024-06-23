@@ -102,6 +102,9 @@ The following figure compares cluster sizes and total performance for the result
 
 ![Performance comparison](perf_comparison.png?raw=true "Performance Comparison")
 
+### Notes about partitioned reading
+
+The previous benchmark takes files pre-partitioned for CXS. Since [60c1e7](https://github.com/ajvazquez/CXS338/commit/60c1e7ee04dbab3ac2da5069d9d76156652e2475) this splitting is no longer necessary as it is possible to configure the block size for automatic partitioned reading, see for example [this configuration](examples/test_dataset_test/sub/cxs338.ini), where the "Spark input files" parameter is defined as a comma separated list of pairs file-path@block-size (in bytes).
 
 ## Deployment
 

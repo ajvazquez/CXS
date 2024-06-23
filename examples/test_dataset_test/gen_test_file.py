@@ -1,4 +1,4 @@
-from iocx.readers.vdif.tools.vdif_generator import generate_vdif
+from cxs.iocx.readers.vdif.tools.vdif_generator import generate_vdif
 
 # Enable for generating 1/100 of the test data
 SUB_TEST = False
@@ -9,12 +9,12 @@ if SUB_TEST:
     fs = 2e7
     Bpf = 1000
     seconds_duration = 20
-    prefix = "./examples/test_dataset_test/sub/media/new_"
+    prefix = "examples/test_dataset_test/sub/media"
 else:
     fs = 2e9
     Bpf = 100000
     seconds_duration = 20
-    prefix = "./examples/test_dataset_test/full/media/2new_"
+    prefix = "examples/test_dataset_test/full/media"
 date = [2015, 11, 24, 18, 57, 35]
 bps=2
 log_2_channels = 1

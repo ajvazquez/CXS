@@ -1,10 +1,10 @@
-# CXS338
+# CXS
 
-The project CXS338 is a fork of [MIT Haystack's CorrelX](https://github.com/MITHaystack/CorrelX/) VLBI Correlator, developed by [A.J. Vazquez Alvarez](https://github.com/ajvazquez) on a postdoctoral research position at MIT Haystack back in 2015-2017.
+The project CXS (originally CXS338) is a fork of [MIT Haystack's CorrelX](https://github.com/MITHaystack/CorrelX/) VLBI Correlator, developed by [A.J. Vazquez Alvarez](https://github.com/ajvazquez) on a postdoctoral research position at MIT Haystack back in 2015-2017.
 The original project's main objectives were "scalability, flexibility and simplicity". This project aims at adding "performance" to that list.
 
 
-This project (CXS338) starts as a migration of CorrelX to run on [Apache Spark](https://spark.apache.org/) as part of a Masters' Thesis on Big Data at UNED by this author in 2021, as a proof of concept with the following objectives:
+This project (CXS) starts as a migration of CorrelX to run on [Apache Spark](https://spark.apache.org/) as part of a Masters' Thesis on Big Data at UNED by this author in 2021, as a proof of concept with the following objectives:
 * Simplifying architecture and usage (simplicity).
 * Migrating from Python 2 to Python 3 (flexibility).
 * Migrating from Hadoop to Spark (performance).

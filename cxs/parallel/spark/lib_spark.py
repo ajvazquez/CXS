@@ -4,6 +4,7 @@
 export SPARK_HOME=/home/aj/work/tfm/spark-3.0.1-bin-hadoop2.7
 export PYTHONPATH=$PYTHONPATH:`pwd`/cxs
 """
+import glob
 import io
 import os
 import time
@@ -44,11 +45,12 @@ class CXSworker(CXworker):
     def stop_spark(sc):
         sc.stop()
 
-    def __init__(self, config_file, debug_partitions=False, save_txt_only=True):
+    def __init__(self, config_file, debug_partitions=False, save_txt_only=True, group_output=True):
 
         super().__init__(config_file=config_file)
         self.debug_spark_partitions = debug_partitions
         self.save_txt_only = save_txt_only
+        self.group_output = group_output
         self.init_out(raise_if_error=not save_txt_only)
 
     def _read_input_files_many_blocks(self, sc):
@@ -86,6 +88,26 @@ class CXSworker(CXworker):
             for x in data.collect():
                 print(x, file=f_out)
 
+    def group_output_full(self, out_file):
+        out_dir = out_file+"_dir"
+        os.rename(out_file, out_dir)
+        if not glob.glob(os.path.join(out_dir,"_SUCCESS")):
+            print("Error during processing, skipping merge")
+        else:
+            files = list(sorted(glob.glob(os.path.join(out_dir,"part-*")), key=lambda x:int(x.split("-")[-1])))
+            print("Merging {} files into {}".format(len(files), out_file))
+            ts = time.time()
+            try:
+                with open(out_file,"w") as fout:
+                    for fin in files:
+                        with open(fin) as fin:
+                            for line in fin:
+                                print(line.rstrip(),file=fout)
+                print("Merged in {} s".format(time.time()-ts))
+            except Exception as e:
+                print("ERROR merging ({}), leaving data in {}".format(out_dir))
+
+
     def run(self, sc):
 
         num_channels = self.num_channels
@@ -111,6 +133,8 @@ class CXSworker(CXworker):
 
         if self.save_txt_only:
             data_reduced.saveAsTextFile(self.out_file)
+            if self.group_output:
+                self.group_output_full(self.out_file)
         else:
             self.write_output_full(data_reduced)
 

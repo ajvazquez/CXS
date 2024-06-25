@@ -58,9 +58,13 @@ def main():
                          dest="keep", default=None, \
                          help="Number of minutes to keep Spark session open.")
 
-    cparser.add_argument('-s', action="store_true", \
-                         dest="save_txt", default=False, \
-                         help="Save as text file (instead of saving single file to master).")
+    cparser.add_argument('-n', action="store_false", \
+                         dest="no_merge", default=False, \
+                         help="Do not merge output files.")
+
+    cparser.add_argument('-d', action="store_true", \
+                         dest="save_driver", default=False, \
+                         help="Save as single file to driver (Spark collect).")
 
     cparser.add_argument('-v', action="store_true", \
                          dest="verbose", default=False, \
@@ -69,7 +73,8 @@ def main():
     args = cparser.parse_args()
     config_file = args.configuration_file
     keep = args.keep
-    save_txt = args.save_txt
+    save_txt = not args.save_driver
+    group_output = not args.no_merge
     verbose = args.verbose
 
     error = None

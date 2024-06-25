@@ -106,6 +106,13 @@ The following figure compares cluster sizes and total performance for the result
 
 The previous benchmark takes files pre-partitioned for CXS. Since [60c1e7](https://github.com/ajvazquez/CXS338/commit/60c1e7ee04dbab3ac2da5069d9d76156652e2475) this splitting is no longer necessary as it is possible to configure the block size for automatic partitioned reading, see for example [this configuration](examples/test_dataset_test/sub/cxs338.ini), where the "Spark input files" parameter is defined as a comma separated list of pairs file-path@block-size (in bytes).
 
+### Notes about output generation
+
+Options running CXS:
+- Default: generates output distributedly in executors and finally joins it into a single file in the driver (recommended if single node or with filesystem shared by executors).
+- No merge ("-n"): same as default but skipping the last merge step, output in executors.
+- Single file ("-s"): relies on Spark for the merge in the driver (does not require a shared file system but may be prone to OOM).
+
 ## Deployment
 
 ### Installation from package

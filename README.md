@@ -16,25 +16,26 @@ About the naming convention:
 * CXH227: CorrelX on Hadoop 2, Python 2.7 ([CorrelX legacy](https://github.com/MITHaystack/CorrelX/)).
 * CXPL38: CorrelX on Pipeline, Python 3.8.
 * CXS338: CorrelX on Spark 3, Python 3.8.
+* CXS3311: CorrelX on Spark 3, Python 3.11.
 
 ## Configuration
 
-Download Apache Spark 3.0.2 pre-built for Apache Hadoop 2.7:
+Download Apache Spark 3.5.1 pre-built for Apache Hadoop 3:
 ```
-wget https://ftp.cixug.es/apache/spark/spark-3.0.2/spark-3.0.2-bin-hadoop2.7.tgz
-tar -xvzf spark-3.0.2-bin-hadoop2.7
+wget https://ftp.cixug.es/apache/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
+tar -xvzf spark-3.5.1-bin-hadoop3.tgz 
 ```
 
 Create environment and install requirements:
 ```
-cd src
-virtualenv -p python3 venv3
+python3.11 -m venv venv3
 source venv3/bin/activate
-pip install -r ../requirements.txt
+pip install -r requirements.pkg.txt
+python cxs/tools/gen_symlinks.py
 ```
 Add the following lines to venv3/bin/activate (replace the path as required):
 ```
-export SPARK_HOME=/home/aj/spark-3.0.2-bin-hadoop2.7
+export SPARK_HOME=/home/aj/spark-3.5.1-bin-hadoop3
 export PYTHONPATH=$PYTHONPATH:`pwd`/src
 export PYTHONPATH=$PYTHONPATH:`pwd`/cxs
 ```
@@ -56,7 +57,7 @@ bash examples/run_example_vgos_hadoop.sh
 ```
 ### Spark
 ```
-bash sh/run_example_vgos_spark.sh
+bash examples/run_example_vgos_spark.sh
 ```
 
 ## Benchmark
@@ -134,7 +135,7 @@ pip install dist/cxs338-0.0.1.tar.gz
 Installing directly from github:
 ```
 python3 -m venv venv3
-venv3/bin/pip install -e git+https://github.com/ajvazquez/CXS338.git@master#egg=CXS338
+venv3/bin/pip install -e git+https://github.com/ajvazquez/CXS338.git@dev#egg=CXS338
 ```
 
 ## Execution
@@ -164,9 +165,7 @@ For a precision comparison between CorrelX and DiFX please refer to the [CorrelX
 For a precision comparison between CXS338 and CorrelX please use the following tests:
 
 ```
-cd src
-source venv3/bin/activate
-python -m unittest discover -s .
+python -m unittest discover
 ```
 
 ## Project Status

@@ -76,19 +76,21 @@ before uploading it to AWS S3.
 
 Running a correlation on AWS EMR:
 
-0. Generate the data and split it into blocks (multiple of the size of a VDIF frame) using the script ```examples/test_dataset_test/aws/split_files.sh```.
 1. Create a cluster in AWS EMR, providing the bootstrap script in ```examples/test_dataset_test/aws/provision.sh```.
 2. Upload the experiment folder to the master node, and the media files to S3.
 3. Run the correlation.
+
+It is possible (step 0) to generate the data and split it into blocks (multiple of the size of a VDIF frame) using the script ```examples/test_dataset_test/aws/split_files.sh``` (this was done for CXS338).
 
 ### Results
 
 Performance (processing rate) is calculated dividing the total data by the measured time and by the number of vCPUs (16).
 
 ```
-              cluster             data     time      processing rate by single vCPU
+              cluster             data     time      rate/vCPU
 DiFX-2.5.2    1x n1-highmem-16    80 GB    2000 s    2.56 MB/s
 CXS338        4x m4.xlarge        40 GB    4309 s    0.59 MB/s
+CXS3311       1x laptop           40 GB   12562 s    0.82 MB/s
 ```
 
 GCP n1-highmem-16:
@@ -99,13 +101,17 @@ AWS m4.xlarge:
 * Processor: Intel Xeon E5-2676 v3 @ 2.4 GHz. Virtual cores: 4.
 * RAM: 16 GB.
 
+Laptop:
+* Processor: Intel Core i7-3632QM @ 2.2 GHz. Virtual cores: 4 (max: 8).
+* RAM: 16 GB.
+
 The following figure compares cluster sizes and total performance for the results shown above.
 
 ![Performance comparison](perf_comparison.png?raw=true "Performance Comparison")
 
 ### Notes about partitioned reading
 
-The previous benchmark takes files pre-partitioned for CXS. Since [60c1e7](https://github.com/ajvazquez/CXS338/commit/60c1e7ee04dbab3ac2da5069d9d76156652e2475) this splitting is no longer necessary as it is possible to configure the block size for automatic partitioned reading, see for example [this configuration](examples/test_dataset_test/sub/cxs338.ini), where the "Spark input files" parameter is defined as a comma separated list of pairs file-path@block-size (in bytes).
+The previous benchmark takes files pre-partitioned for CXS338. Since CXS3311 this splitting is no longer necessary as it is possible to configure the block size for automatic partitioned reading, see for example [this configuration](examples/test_dataset_test/sub/cxs338.ini), where the "Spark input files" parameter is defined as a comma separated list of pairs file-path@block-size (in bytes).
 
 ### Notes about output generation
 

@@ -109,6 +109,6 @@ class CXworker(object):
         return fun_mapper(self.config_gen, self.config_ini, f_input, f_name)
 
     def reducer(self, lines):
-        # TODO: consider removing
-        lines = list(sorted(lines, key=lambda x: x.split(KEY_SEP[0])))
+        lines.sort(key=lambda x: x.split(KEY_SEP)[0])
         return fun_reducer(self.config_gen, self.config_ini, lines)
+

@@ -163,7 +163,7 @@ def hstack_new_samples(F1_partial,F_ind_partial,F_ind,F1,F_adj_shift_partial,F_s
     |
     |  Group repeated code, and create functions for managing F_lti.
     """
-    F_lti=np.copy(F_lti_in)
+    F_lti=F_lti_in
     failed_hstack=0   
     F_stack_shift_out=F_stack_shift
     reset_structures=0

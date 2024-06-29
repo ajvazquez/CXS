@@ -125,7 +125,7 @@ class CXSworker(CXworker):
         data_grouped = data.reduceByKey(lambda x, y: x+y, self.num_partitions, f_x)
         self.print_partitions(data_grouped, "group")
 
-        data_sorted = data_grouped.repartitionAndSortWithinPartitions(self.num_partitions, f_x)
+        data_sorted = data_grouped.repartitionAndSortWithinPartitions(self.num_partitions, f_x, keyfunc=f_x)
         self.print_partitions(data_sorted, "repartition")
 
         data_reduced = data_sorted.flatMap(lambda rdd:self.reduce_lines(rdd))
